@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Offline - Apriori Kimia Farma</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: #333;
+        }
+
+        .offline-container {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .offline-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .offline-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: white;
+        }
+
+        h1 {
+            color: #5a5c69;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        p {
+            color: #858796;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .offline-details {
+            background: #f8f9fc;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .offline-details h3 {
+            color: #5a5c69;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .offline-details ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .offline-details li {
+            color: #858796;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .offline-details li::before {
+            content: "✓";
+            color: #1cc88a;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0.5rem 1rem rgba(78, 115, 223, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.75rem 1.5rem rgba(78, 115, 223, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #858796 0%, #6e707e 100%);
+            box-shadow: 0 0.5rem 1rem rgba(133, 135, 150, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 0.75rem 1.5rem rgba(133, 135, 150, 0.4);
+        }
+
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f6c23e;
+            color: #333;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .connection-status::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background: #e74a3b;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e3e6f0;
+            color: #858796;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .offline-container {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .offline-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .offline-icon svg {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            .offline-container {
+                background: #2a2a2a;
+            }
+
+            h1 {
+                color: #e3e6f0;
+            }
+
+            p, .footer {
+                color: #b7b9cc;
+            }
+
+            .offline-details {
+                background: #1a1a1a;
+            }
+
+            .offline-details h3 {
+                color: #e3e6f0;
+            }
+
+            .offline-details li {
+                color: #b7b9cc;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <img src="/assets/img/kimiafarma.png" alt="Kimia Farma Logo" class="logo" onerror="this.style.display='none'">
+        
+        <div class="offline-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17l1.46 1.46C10.21 6.23 11.08 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3 0 1.13-.64 2.11-1.56 2.62l1.45 1.45C23.16 18.16 24 16.68 24 15c0-2.64-2.05-4.78-4.65-4.96zM3 5.27l2.75 2.74C2.56 8.15 0 10.77 0 14c0 3.31 2.69 6 6 6h11.73l2 2L21 20.73 4.27 4 3 5.27zM7.73 10l8 8H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h1.73z"/>
+            </svg>
+        </div>
+
+        <div class="connection-status">
+            Offline Mode
+        </div>
+
+        <h1>You're Offline</h1>
+        
+        <p>
+            It looks like you've lost your internet connection. Don't worry, 
+            some features are still available offline.
+        </p>
+
+        <div class="offline-details">
+            <h3>
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                Available Offline:
+            </h3>
+            <ul>
+                <li>View cached dashboard data</li>
+                <li>Browse previously loaded pages</li>
+                <li>Access saved reports</li>
+                <li>View transaction history</li>
+            </ul>
+        </div>
+
+        <button class="btn" onclick="location.reload()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 0.5rem;">
+                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+            Try Again
+        </button>
+        
+        <br>
+        
+        <button class="btn btn-secondary" onclick="goBack()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 0.5rem;">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            Go Back
+        </button>
+
+        <div class="footer">
+            <p style="margin: 0;">
+                <strong>Apriori Data Mining System</strong><br>
+                Kimia Farma Apotek<br>
+                © <?php echo date('Y'); ?> All Rights Reserved
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Auto retry connection every 5 seconds
+        let retryCount = 0;
+        const maxRetries = 10;
+
+        function checkConnection() {
+            if (navigator.onLine) {
+                location.reload();
+            } else {
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    setTimeout(checkConnection, 5000);
+                }
+            }
+        }
+
+        // Start checking connection
+        setTimeout(checkConnection, 5000);
+
+        // Update status when connection restored
+        window.addEventListener('online', () => {
+            document.querySelector('.connection-status').innerHTML = 
+                '<span style="background: #1cc88a; width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 0.5rem;"></span>Back Online';
+            document.querySelector('.connection-status').style.background = '#1cc88a';
+            document.querySelector('.connection-status').style.color = 'white';
+            
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        });
+
+        // Go back function
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        // Service Worker check
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then((registration) => {
+                console.log('Service Worker is active');
+            });
+        }
+    </script>
+</body>
+</html>

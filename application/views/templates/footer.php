@@ -73,6 +73,9 @@
 <!-- Custom Enhanced Scripts -->
 <script src="<?= base_url('assets/'); ?>js/custom-enhanced.js"></script>
 
+<!-- Mobile Enhancement Scripts -->
+<script src="<?= base_url('assets/'); ?>js/mobile-enhancement.js"></script>
+
 <!-- Page level plugins -->
 <script src="<?= base_url('assets/'); ?>vendor/datatables/jquery.dataTables.min.js"></script>
 <script src="<?= base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.js"></script>

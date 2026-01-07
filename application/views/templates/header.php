@@ -39,9 +39,28 @@
     
     <!-- Custom Enhanced Styles -->
     <link href="<?= base_url('assets/'); ?>css/custom-style.css" rel="stylesheet">
+    
+    <!-- Mobile Responsive Enhancement -->
+    <link href="<?= base_url('assets/'); ?>css/mobile-responsive.css" rel="stylesheet">
+    
+    <!-- Loading Skeleton Screens -->
+    <link href="<?= base_url('assets/'); ?>css/loading-skeleton.css" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="<?= base_url('manifest.json'); ?>">
 
 </head>
 
 <body id="page-top">
+    <!-- Offline Indicator -->
+    <div class="offline-indicator">
+        <i class="fas fa-wifi-slash mr-2"></i>You are offline
+    </div>
+    
+    <!-- PWA Install Button (Hidden by default, shown by JS when installable) -->
+    <button id="pwa-install-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%); color: white; border: none; padding: 12px 24px; border-radius: 50px; box-shadow: 0 4px 12px rgba(78, 115, 223, 0.4); cursor: pointer; font-weight: 600; font-size: 14px;">
+        <i class="fas fa-download mr-2"></i>Install App
+    </button>
+    
     <!-- Page Wrapper -->
     <div id="wrapper">

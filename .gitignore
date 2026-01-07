@@ -1,4 +1,212 @@
+# ================================
+# .gitignore for Apriori - Kimia Farma
+# CodeIgniter 3 + PWA Application
+# Updated: 2026-01-07
+# ================================
+
+# ========== CodeIgniter Specific ==========
+*/config/development
+*/logs/log-*.php
+*/logs/*.log
+*/cache/*
+*/cache/!index.html
+*/cache/!.htaccess
+
+# ========== Application Folders ==========
+application/cache/*
+!application/cache/index.html
+!application/cache/.htaccess
+
+application/logs/*
+!application/logs/index.html
+!application/logs/.htaccess
+
+# ========== User Uploads ==========
+assets/uploads/*
+!assets/uploads/.gitkeep
+assets/img/profile/*
+!assets/img/profile/default.jpg
+!assets/img/profile/.gitkeep
+
+# ========== Dependencies ==========
+# Composer
+vendor/*
+!vendor/.gitkeep
+composer.phar
+composer.lock
+
+# Node modules (jika ada)
+node_modules/
+package-lock.json
+yarn.lock
+
+# ========== Environment & Config ==========
+.env
+.env.local
+.env.*.local
+*.env
+
+# Database config dengan password
+# application/config/database.php  # Uncomment jika mau ignore
+
+# ========== IDE & Editor ==========
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PhpStorm / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Notepad++
+*.bak
+
+# NetBeans
+nbproject/
+
+# Eclipse
+.buildpath
+.project
+.settings/
+
+# ========== Operating System ==========
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ========== Backup Files ==========
+*.sql
+*.bak
+*.backup
+*.old
+*.orig
+*.swp
+*.swo
+*~
+
+# Database dumps
+database/*.sql
+!database/db_apriori.sql  # Keep original schema
+*.sqlite
+*.db
+
+# ========== Temporary Files ==========
+temp/
+tmp/
+*.tmp
+*.temp
+*.log
+
+# ========== Build & Distribution ==========
+dist/
+build/
+.sass-cache/
+*.map
+
+# ========== Security & Sensitive ==========
+# API keys and secrets
+.secret
+secrets.json
+credentials.json
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+
+# ========== Testing ==========
+tests/_output/*
+tests/_support/_generated
+phpunit.xml
+.phpunit.result.cache
+
+# ========== Miscellaneous ==========
+# Error logs
+error_log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# ========== Keep These Important Files ==========
+# Force include certain files
+!.gitignore
+!.htaccess
+!README.md
+!LICENSE
+!CONTRIBUTING.md
+!composer.json
+!package.json
+!manifest.json
+!service-worker.js
+!offline.html
+!UI-UX-ENHANCEMENT-GUIDE.md
+!QUICK-START-UIUX.md
+
+# Keep vendor minified files
+!assets/vendor/**/*.min.js
+!assets/vendor/**/*.min.css
+
+# ========== Custom - Uncomment jika perlu ==========
+# Ignore PWA icons jika belum siap (hapus # jika icons sudah ready)
+# assets/img/icons/*
+# !assets/img/icons/.gitkeep
+
+# ========== END .gitignore ==========
 
 application/cache/*
 !application/cache/index.html
