@@ -19,7 +19,14 @@
                                 FROM `user_menu` JOIN `user_access_menu` 
                                     ON `user_menu`.`id` = `user_access_menu`.`menu_id`
                                 WHERE `user_access_menu`.`role_id` = $role_id 
-                                ORDER BY `user_access_menu`.`menu_id` ASC
+                                ORDER BY 
+                                    CASE 
+                                        WHEN `user_menu`.`id` = 1 THEN 1
+                                        WHEN `user_menu`.`id` = 4 THEN 2
+                                        WHEN `user_menu`.`id` = 2 THEN 3
+                                        WHEN `user_menu`.`id` = 3 THEN 4
+                                        ELSE 5
+                                    END ASC
                                 ";
             $menu = $this->db->query($queryMenu)->result_array();
             ?>
@@ -43,17 +50,22 @@
                 ?>
 
                 <?php foreach ($subMenu as $sm) : ?>
-                    <?php if ($title == $sm['title']) : ?>
-                        <li class="nav-item active">
-                        <?php else : ?>
-                        <li class="nav-item">
-                        <?php endif; ?>
+                    <?php
+                    // Build current URL from URI segments
+                    $current_path = $this->uri->segment(1);
+                    if ($this->uri->segment(2)) {
+                        $current_path .= '/' . $this->uri->segment(2);
+                    }
+                    
+                    // Check if this menu item is active
+                    $is_active = (trim($current_path, '/') === trim($sm['url'], '/'));
+                    ?>
+                    <li class="nav-item <?= $is_active ? 'active' : ''; ?>">
                         <a class="nav-link pb-0" href="<?= base_url($sm['url']); ?>">
                             <i class="<?= $sm['icon']; ?>"></i>
                             <span><?= $sm['title']; ?></span></a>
-                        </li>
-
-                    <?php endforeach; ?>
+                    </li>
+                <?php endforeach; ?>
 
                     <hr class="sidebar-divider mt-3">
 

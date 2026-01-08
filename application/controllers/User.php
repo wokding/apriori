@@ -9,6 +9,38 @@ class User extends CI_Controller
         is_logged_in();
     }
 
+    /**
+     * Clear old flashdata and session markers to prevent duplicate toast
+     */
+    private function _clear_flashdata()
+    {
+        // Clear flashdata (both new and old)
+        $this->session->unset_userdata('success');
+        $this->session->unset_userdata('error');
+        $this->session->unset_userdata('__ci_vars');
+        
+        // Clear tempdata
+        $this->session->unset_tempdata('success');
+        $this->session->unset_tempdata('error');
+        
+        // Clear all flashdata-related keys
+        $all_userdata = $this->session->userdata();
+        foreach ($all_userdata as $key => $value) {
+            // Clear session markers
+            if (strpos($key, 'flashdata_shown_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear consumed markers
+            if (strpos($key, 'toast_consumed_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear CodeIgniter internal flashdata keys
+            if (strpos($key, '__ci_old_') === 0 || strpos($key, '__ci_new_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+        }
+    }
+
     public function index()
     {
         $data['title'] = 'My Profile';
@@ -66,6 +98,7 @@ class User extends CI_Controller
             $this->db->where('email', $email);
             $this->db->update('user');
 
+            $this->_clear_flashdata();
             $this->session->set_flashdata('success', 'Your profile has been updated successfully!');
             redirect('user');
         }
@@ -91,10 +124,12 @@ class User extends CI_Controller
             $current_password = $this->input->post('current_password');
             $new_password = $this->input->post('new_password1');
             if (!password_verify($current_password, $data['user']['password'])) {
+                $this->_clear_flashdata();
                 $this->session->set_flashdata('error', 'Wrong current password!');
                 redirect('user/changepassword');
             } else {
                 if ($current_password == $new_password) {
+                    $this->_clear_flashdata();
                     $this->session->set_flashdata('error', 'New password cannot be the same as current password!');
                     redirect('user/changepassword');
                 } else {
@@ -105,6 +140,7 @@ class User extends CI_Controller
                     $this->db->where('email', $this->session->userdata('email'));
                     $this->db->update('user');
 
+                    $this->_clear_flashdata();
                     $this->session->set_flashdata('success', 'Password has been changed successfully!');
                     redirect('user/changepassword');
                 }

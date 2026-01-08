@@ -7,10 +7,26 @@
     "use strict";
 
     // ==================== INITIALIZATION ====================
-    // Create toast container on page load
     $(document).ready(function() {
-        if ($('#toast-container').length === 0) {
-            $('body').append('<div id="toast-container"></div>');
+        // Configure toastr globally
+        if (typeof toastr !== 'undefined') {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
         }
         
         // Add fade-in to page content
@@ -96,42 +112,40 @@
     });
 
     // ==================== TOAST NOTIFICATIONS ====================
-    window.showToast = function(message, type = 'info', duration = 4000) {
-        // Ensure container exists
-        if ($('#toast-container').length === 0) {
-            $('body').append('<div id="toast-container"></div>');
+    // Wrapper function for toastr.js
+    window.showToast = function(message, type = 'info', duration = 5000) {
+        if (typeof toastr === 'undefined') {
+            console.error('Toastr library not loaded');
+            return;
         }
         
-        const iconMap = {
-            'success': 'fa-check-circle',
-            'error': 'fa-times-circle',
-            'warning': 'fa-exclamation-triangle',
-            'info': 'fa-info-circle'
-        };
+        // Override timeout for this specific toast if needed
+        const originalTimeout = toastr.options.timeOut;
+        if (duration !== 5000) {
+            toastr.options.timeOut = duration;
+        }
         
-        const toast = $(`
-            <div class="custom-toast toast-${type}">
-                <i class="fas ${iconMap[type]} mr-2"></i>
-                <span>${message}</span>
-                <button class="toast-close">&times;</button>
-            </div>
-        `);
+        // Show toast based on type
+        switch(type) {
+            case 'success':
+                toastr.success(message);
+                break;
+            case 'error':
+                toastr.error(message);
+                break;
+            case 'warning':
+                toastr.warning(message);
+                break;
+            case 'info':
+            default:
+                toastr.info(message);
+                break;
+        }
         
-        $('#toast-container').append(toast);
-        
-        setTimeout(() => {
-            toast.addClass('show');
-        }, 10);
-        
-        setTimeout(() => {
-            toast.removeClass('show');
-            setTimeout(() => toast.remove(), 300);
-        }, duration);
-        
-        toast.find('.toast-close').on('click', function() {
-            toast.removeClass('show');
-            setTimeout(() => toast.remove(), 300);
-        });
+        // Restore original timeout
+        if (duration !== 5000) {
+            toastr.options.timeOut = originalTimeout;
+        }
     };
 
     // ==================== CONFIRMATION MODAL ====================
@@ -211,38 +225,24 @@
             cancelText: 'Cancel',
             confirmClass: 'btn-danger',
             onConfirm: function() {
-                // Show global loading overlay
-                $('#loadingOverlayTitle').text('Deleting...');
-                $('#loadingOverlayMessage').text('Please wait while we delete the item.');
-                $('#globalLoadingOverlay').fadeIn(200);
-                
-                // Redirect to delete URL
-                window.location.href = href;
+                // Small delay to ensure modal closes first
+                setTimeout(function() {
+                    // Show global loading overlay AFTER modal closes
+                    if (typeof window.showLoading === 'function') {
+                        window.showLoading('Deleting...', 'Please wait while we delete the item.');
+                    } else {
+                        $('#loadingOverlayTitle').text('Deleting...');
+                        $('#loadingOverlayMessage').text('Please wait while we delete the item.');
+                        $('#globalLoadingOverlay').fadeIn(200);
+                    }
+                    
+                    // Redirect to delete URL
+                    window.location.href = href;
+                }, 200);
             }
         });
         
         return false;
-    });
-
-    // ==================== CONVERT FLASH MESSAGES TO TOAST ====================
-    $(document).ready(function() {
-        setTimeout(function() {
-            $('.alert:not(.alert-permanent)').each(function() {
-                const $alert = $(this);
-                let type = 'info';
-                
-                if ($alert.hasClass('alert-success')) type = 'success';
-                else if ($alert.hasClass('alert-danger')) type = 'error';
-                else if ($alert.hasClass('alert-warning')) type = 'warning';
-                
-                const message = $alert.text().trim();
-                if (message) {
-                    showToast(message, type, 5000);
-                }
-                
-                $alert.remove();
-            });
-        }, 300);
     });
 
     // ==================== REAL-TIME FORM VALIDATION ====================
@@ -339,14 +339,7 @@
             return false;
         }
         
-        // Show loading on valid submit (but don't prevent submission)
-        const $submitBtn = $form.find('button[type="submit"]');
-        if ($submitBtn.length && !$form.hasClass('no-loading')) {
-            const originalHtml = $submitBtn.html();
-            $submitBtn.data('original-html', originalHtml);
-            $submitBtn.prop('disabled', true);
-            $submitBtn.html('<i class="fas fa-spinner fa-spin mr-2"></i>Processing...');
-        }
+        // Loading indicator handles all visual feedback - no need to modify button here
         
         // Form will submit normally
         return true;
@@ -508,7 +501,7 @@ $('head').append(`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 99999;
+    z-index: 1045;
     backdrop-filter: blur(5px);
 }
 
@@ -519,102 +512,6 @@ $('head').append(`
     border-top: 6px solid #667eea;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loader-message {
-    color: white;
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* ==================== TOAST NOTIFICATIONS ==================== */
-#toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    max-width: 400px;
-}
-
-.custom-toast {
-    background: white;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    transform: translateX(400px);
-    transition: all 0.3s ease;
-    border-left: 4px solid #667eea;
-    min-width: 300px;
-}
-
-.custom-toast.show {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.custom-toast.toast-success {
-    border-left-color: #28a745;
-}
-
-.custom-toast.toast-success i {
-    color: #28a745;
-}
-
-.custom-toast.toast-error {
-    border-left-color: #dc3545;
-}
-
-.custom-toast.toast-error i {
-    color: #dc3545;
-}
-
-.custom-toast.toast-warning {
-    border-left-color: #ffc107;
-}
-
-.custom-toast.toast-warning i {
-    color: #ffc107;
-}
-
-.custom-toast.toast-info {
-    border-left-color: #17a2b8;
-}
-
-.custom-toast.toast-info i {
-    color: #17a2b8;
-}
-
-.custom-toast span {
-    flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-}
-
-.custom-toast .toast-close {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #999;
-    cursor: pointer;
-    padding: 0;
-    margin-left: 10px;
-    line-height: 1;
-}
-
-.custom-toast .toast-close:hover {
-    color: #333;
 }
 
 /* ==================== CONFIRMATION MODAL ==================== */
@@ -706,19 +603,6 @@ body.loaded {
 
 .image-preview-container img:hover {
     transform: scale(1.02);
-}
-
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
-    #toast-container {
-        right: 10px;
-        left: 10px;
-        max-width: none;
-    }
-    
-    .custom-toast {
-        min-width: auto;
-    }
 }
 </style>
 `);

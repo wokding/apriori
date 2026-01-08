@@ -18,13 +18,23 @@
 <!-- End of Page Wrapper -->
 
 <!-- Global Loading Overlay -->
-<div id="globalLoadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-        <div class="spinner-border text-light" style="width: 4rem; height: 4rem;" role="status">
-            <span class="sr-only">Loading...</span>
+<div id="globalLoadingOverlay" class="global-loading-overlay" style="display: none;">
+    <div class="loading-overlay-content">
+        <div class="loading-spinner-wrapper">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <div class="loading-logo">
+                <i class="fas fa-capsules"></i>
+            </div>
         </div>
-        <h3 class="text-white mt-3" id="loadingOverlayTitle">Processing...</h3>
-        <p class="text-white" id="loadingOverlayMessage">Please wait while we process your request.</p>
+        <h3 class="loading-title" id="loadingOverlayTitle">Processing...</h3>
+        <p class="loading-message" id="loadingOverlayMessage">Please wait while we process your request.</p>
+        <div class="loading-bar">
+            <div class="loading-bar-fill"></div>
+        </div>
     </div>
 </div>
 
@@ -70,8 +80,17 @@
 <!-- Custom scripts for all pages-->
 <script src="<?= base_url('assets/'); ?>js/sb-admin-2.min.js"></script>
 
+<!-- Toastr for Toast Notifications -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- SweetAlert2 for Modal Confirmations -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- Custom Enhanced Scripts -->
 <script src="<?= base_url('assets/'); ?>js/custom-enhanced.js"></script>
+
+<!-- Loading Indicator Script -->
+<script src="<?= base_url('assets/'); ?>js/loading-indicator.js"></script>
 
 <!-- Mobile Enhancement Scripts -->
 <script src="<?= base_url('assets/'); ?>js/mobile-enhancement.js"></script>
@@ -145,35 +164,34 @@
             const form = $(this);
             const loadingTitle = form.data('loading-title') || 'Processing...';
             const loadingMessage = form.data('loading-message') || 'Please wait while we process your request.';
-            
+
             // Update loading overlay text
             $('#loadingOverlayTitle').text(loadingTitle);
             $('#loadingOverlayMessage').text(loadingMessage);
-            
+
             // Show loading overlay
             $('#globalLoadingOverlay').fadeIn(300);
-            
-            // Disable all submit buttons in the form
-            form.find('button[type="submit"], input[type="submit"]').prop('disabled', true);
-            
+
+            // Loading indicator handles all visual feedback - no need to disable buttons
+
             // Allow form to continue submitting
             return true;
         });
         
         // Global navigation loading - Show loading on menu/link clicks
-        $('a:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"]):not([data-toggle]):not(.no-loading):not(.delete-btn):not(.btn-delete)').on('click', function(e) {
+        $('a:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"]):not([data-toggle]):not(.no-loading):not(.delete-btn):not(.btn-delete):not([data-confirm])').on('click', function(e) {
             const href = $(this).attr('href');
-            
+
             // Skip if no href or empty href
             if (!href || href === '' || href === '#') {
                 return true;
             }
-            
+
             // Skip external links
             if (href.indexOf('http') === 0 && href.indexOf(window.location.host) === -1) {
                 return true;
             }
-            
+
             // Show loading overlay
             $('#loadingOverlayTitle').text('Loading...');
             $('#loadingOverlayMessage').text('Please wait while we load the page.');

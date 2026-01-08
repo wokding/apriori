@@ -1,6 +1,6 @@
 # 🛒 Apriori Data Mining System
 
-[![PHP Version](https://img.shields.io/badge/PHP-%3E%3D%207.2-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-%3E%3D%208.1-blue.svg)](https://php.net)
 [![CodeIgniter](https://img.shields.io/badge/CodeIgniter-3.1.x-orange.svg)](https://codeigniter.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
@@ -66,7 +66,8 @@ Sistem Data Mining berbasis web yang mengimplementasikan **Algoritma Apriori** u
 
 ### Prasyarat
 ```bash
-- PHP >= 7.2
+- PHP >= 8.1 (direkomendasikan 8.3)
+- Ekstensi PHP: mbstring, openssl, zip
 - MySQL >= 5.7
 - Composer
 - Apache/Nginx
@@ -85,6 +86,8 @@ cd apriori
 ```bash
 composer install
 ```
+
+> Jika menggunakan Windows/PowerShell pastikan ekstensi `mbstring`, `openssl`, dan `zip` sudah aktif di `php.ini`. Dompdf v3.x membutuhkan PHP >= 8.1.
 
 3. **Konfigurasi Database**
 ```bash
@@ -361,7 +364,7 @@ Jika menemukan bug, silakan [buat issue](https://github.com/wokding/apriori/issu
 ## 📞 Support
 
 Jika memerlukan bantuan:
-- 📧 Email: adenaufalr@example.com
+- 📧 Email: adenaufalr@gmail.com
 - 💬 [GitHub Discussions](https://github.com/wokding/apriori/discussions)
 - 🐛 [Issue Tracker](https://github.com/wokding/apriori/issues)
 

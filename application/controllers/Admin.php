@@ -12,6 +12,38 @@ class Admin extends CI_Controller
         $this->load->helper('rupiah_helper', 'rupiah');
     }
 
+    /**
+     * Clear old flashdata and session markers to prevent duplicate toast
+     */
+    private function _clear_flashdata()
+    {
+        // Clear flashdata (both new and old)
+        $this->session->unset_userdata('success');
+        $this->session->unset_userdata('error');
+        $this->session->unset_userdata('__ci_vars');
+        
+        // Clear tempdata
+        $this->session->unset_tempdata('success');
+        $this->session->unset_tempdata('error');
+        
+        // Clear all flashdata-related keys
+        $all_userdata = $this->session->userdata();
+        foreach ($all_userdata as $key => $value) {
+            // Clear session markers
+            if (strpos($key, 'flashdata_shown_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear consumed markers
+            if (strpos($key, 'toast_consumed_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear CodeIgniter internal flashdata keys
+            if (strpos($key, '__ci_old_') === 0 || strpos($key, '__ci_new_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+        }
+    }
+
 
     public function index()
     {
@@ -38,11 +70,102 @@ class Admin extends CI_Controller
 
         $data['role'] = $this->db->get('user_role')->result_array();
 
+        $this->form_validation->set_rules('role', 'Role', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $this->load->view('templates/header', $data);
+            $this->load->view('templates/sidebar', $data);
+            $this->load->view('templates/topbar', $data);
+            $this->load->view('admin/role', $data);
+            $this->load->view('templates/footer');
+        } else {
+            $this->db->insert('user_role', ['role' => $this->input->post('role')]);
+            $this->_clear_flashdata();
+            $this->session->set_flashdata('success', 'New role has been added successfully!');
+            redirect('admin/role');
+        }
+    }
+
+    public function editRole()
+    {
+        $id = $this->input->post('id');
+        $role = $this->input->post('role');
+
+        $this->db->where('id', $id);
+        $this->db->update('user_role', ['role' => $role]);
+        
+        $this->_clear_flashdata();
+        $this->session->set_flashdata('success', 'Role has been updated successfully!');
+        redirect('admin/role');
+    }
+
+    public function deleteRole($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('user_role');
+        
+        $this->_clear_flashdata();
+        $this->session->set_flashdata('success', 'Role has been deleted successfully!');
+        redirect('admin/role');
+    }
+
+    public function users()
+    {
+        $data['title'] = 'User Management';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        // Get all users with role name
+        $this->db->select('user.*, user_role.role');
+        $this->db->from('user');
+        $this->db->join('user_role', 'user_role.id = user.role_id');
+        $this->db->order_by('user.date_created', 'ASC');
+        $data['users'] = $this->db->get()->result_array();
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('templates/topbar', $data);
-        $this->load->view('admin/role', $data);
+        $this->load->view('admin/users', $data);
         $this->load->view('templates/footer');
+    }
+
+    public function toggleUserStatus($id)
+    {
+        $user = $this->db->get_where('user', ['id' => $id])->row_array();
+        
+        if ($user) {
+            $new_status = $user['is_active'] == 1 ? 0 : 1;
+            $this->db->where('id', $id);
+            $this->db->update('user', ['is_active' => $new_status]);
+            
+            $status_text = $new_status == 1 ? 'activated' : 'deactivated';
+            $this->_clear_flashdata();
+            $this->session->set_flashdata('success', 'User has been ' . $status_text . ' successfully!');
+        }
+        
+        redirect('admin/users');
+    }
+
+    public function deleteUser($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('user');
+        
+        $this->_clear_flashdata();
+        $this->session->set_flashdata('success', 'User has been deleted successfully!');
+        redirect('admin/users');
+    }
+
+    public function changeUserRole()
+    {
+        $id = $this->input->post('id');
+        $role_id = $this->input->post('role_id');
+
+        $this->db->where('id', $id);
+        $this->db->update('user', ['role_id' => $role_id]);
+
+        $this->_clear_flashdata();
+        $this->session->set_flashdata('success', 'User role has been updated successfully!');
+        redirect('admin/users');
     }
 
     public function roleAccess($role_id)
@@ -79,6 +202,7 @@ class Admin extends CI_Controller
         } else {
             $this->db->delete('user_access_menu', $data);
         }
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Access changed successfully!');
     }
 
@@ -108,6 +232,7 @@ class Admin extends CI_Controller
                 'total' => $this->input->post('total')
             ];
             $this->db->insert('transaksi', $data);
+            $this->_clear_flashdata();
             $this->session->set_flashdata('success', 'Transaction has been added successfully!');
             redirect('admin/datatransaksi');
         }
@@ -116,6 +241,7 @@ class Admin extends CI_Controller
     public function editDataTransaksi($id)
     {
         $this->admin->updateDataTransaksi($id);
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Transaction has been updated successfully!');
         redirect('admin/datatransaksi');
     }
@@ -123,6 +249,7 @@ class Admin extends CI_Controller
     public function deleteDataTransaksi($id)
     {
         $this->admin->deleteDataTransaksi($id);
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Transaction has been deleted successfully!');
         redirect('admin/datatransaksi');
     }
@@ -130,6 +257,7 @@ class Admin extends CI_Controller
     public function deleteAllDataTransaksi()
     {
         $this->admin->deleteAllDataTransaksi();
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'All transactions have been deleted successfully!');
         redirect('admin/datatransaksi');
     }
@@ -201,10 +329,12 @@ class Admin extends CI_Controller
                 $data['transaksi'] = $fetchData;
                 $this->admin->setBatchImport($fetchData);
                 $this->admin->importData();
+                $this->_clear_flashdata();
+                $this->session->set_flashdata('success', 'Transactions have been imported successfully!');
             } else {
-                echo "Please import correct file, did not match excel sheet column";
+                $this->_clear_flashdata();
+                $this->session->set_flashdata('error', 'Please import correct file, did not match excel sheet column');
             }
-            $this->session->set_flashdata('success', 'Transactions have been imported successfully!');
             redirect('admin/datatransaksi');
         }
     }
@@ -243,9 +373,11 @@ class Admin extends CI_Controller
                 $process_data = $this->admin->getRuleID($last);
                 $process_id = !empty($process_data->process_id) ? $process_data->process_id : 'DM-' . str_pad($last, 3, '0', STR_PAD_LEFT);
                 
+                $this->_clear_flashdata();
                 $this->session->set_flashdata('success', 'Mining process completed successfully!');
                 redirect('admin/viewRule/' . $process_id);
             } else {
+                $this->_clear_flashdata();
                 $this->session->set_flashdata('error', 'Mining process failed. Please check your parameters and try again.');
                 redirect('admin/prosesapriori');
             }
@@ -275,6 +407,7 @@ class Admin extends CI_Controller
         if (!$id) show_404();
         
         if ($this->admin->deleteRule($id)) {
+            $this->_clear_flashdata();
             $this->session->set_flashdata('success', 'Rule Berhasil dihapus');
             redirect(site_url('admin/hasil'));
         }
@@ -346,13 +479,20 @@ class Admin extends CI_Controller
         $this->load->view('admin/view_rule_pdf', $data);
         $html = ob_get_clean();
 
-        // Include mPDF library - force new instance
-        require(APPPATH . 'third_party/MPDF57/mpdf.php');
+        // Include Dompdf library
+        require_once(APPPATH . '../vendor/autoload.php');
 
-        // Create PDF
-        $mpdf = new mPDF();
-        $mpdf->WriteHTML($html);
-        $mpdf->Output('Hasil_Rule_' . $id . '.pdf', 'I');
+        // Allow image loading from filesystem/base_url and enable HTML5 parser for better rendering
+        $dompdfOptions = new Dompdf\Options();
+        $dompdfOptions->set('isRemoteEnabled', true);
+        $dompdfOptions->set('isHtml5ParserEnabled', true);
+        $dompdfOptions->setChroot(FCPATH);
+
+        $dompdf = new Dompdf\Dompdf($dompdfOptions);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream('Hasil_Rule_' . $id . '.pdf', array('Attachment' => 0));
         exit;
     }
 
@@ -389,10 +529,11 @@ class Admin extends CI_Controller
     {
         $result = $this->admin->deleteProcessData($id);
         
+        $this->_clear_flashdata();
         if ($result) {
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Process data deleted successfully!</div>');
+            $this->session->set_flashdata('success', 'Process data deleted successfully!');
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Failed to delete process data.</div>');
+            $this->session->set_flashdata('error', 'Failed to delete process data.');
         }
         
         redirect('admin/cleanup');
@@ -402,8 +543,9 @@ class Admin extends CI_Controller
     {
         $keep_latest = $this->input->post('keep_latest');
         
+        $this->_clear_flashdata();
         if (!$keep_latest || $keep_latest < 1) {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Invalid number specified.</div>');
+            $this->session->set_flashdata('error', 'Invalid number specified.');
             redirect('admin/cleanup');
             return;
         }
@@ -411,9 +553,9 @@ class Admin extends CI_Controller
         $result = $this->admin->deleteOldProcesses($keep_latest);
         
         if ($result) {
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Old processes cleaned up successfully!</div>');
+            $this->session->set_flashdata('success', 'Old processes cleaned up successfully!');
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Cleanup failed or no old data to delete.</div>');
+            $this->session->set_flashdata('error', 'Cleanup failed or no old data to delete.');
         }
         
         redirect('admin/cleanup');
@@ -423,10 +565,11 @@ class Admin extends CI_Controller
     {
         $result = $this->admin->deleteAllProcessData();
         
+        $this->_clear_flashdata();
         if ($result) {
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">All process data deleted successfully!</div>');
+            $this->session->set_flashdata('success', 'All process data deleted successfully!');
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Failed to delete all process data.</div>');
+            $this->session->set_flashdata('error', 'Failed to delete all process data.');
         }
         
         redirect('admin/cleanup');

@@ -114,7 +114,7 @@
                     <p class="text-muted mb-3">
                         <i class="fas fa-info-circle mr-1"></i>Keep the latest N processes and delete all older ones. This helps maintain database performance.
                     </p>
-                    <form id="formKeepLatest" action="<?= base_url('admin/deleteOldProcesses'); ?>" method="post">
+                    <form id="formKeepLatest" action="<?= base_url('admin/deleteOldProcesses'); ?>" method="post" data-loading="true" data-loading-title="Cleaning Database" data-loading-message="Deleting old processes...">
                         <div class="form-group">
                             <label class="font-weight-bold">Keep Latest:</label>
                             <select name="keep_latest" id="keep_latest" class="form-control" required>
@@ -125,7 +125,7 @@
                                 <option value="50">50 Processes</option>
                             </select>
                         </div>
-                        <button type="button" class="btn btn-warning btn-block shadow-sm no-loading" onclick="confirmKeepLatest()">
+                        <button type="button" class="btn btn-warning btn-block shadow-sm" onclick="confirmKeepLatest()">
                             <i class="fas fa-trash-alt mr-2"></i>Delete Old Processes
                         </button>
                     </form>
@@ -146,8 +146,8 @@
                         <i class="fas fa-exclamation-circle mr-1 text-danger"></i>
                         <strong class="text-danger">Warning:</strong> This will delete ALL process data permanently. Only transaction data will be kept.
                     </p>
-                    <form id="formDeleteAll" action="<?= base_url('admin/deleteAllProcesses'); ?>" method="post">
-                        <button type="button" class="btn btn-danger btn-block shadow-sm no-loading" onclick="confirmDeleteAll()">
+                    <form id="formDeleteAll" action="<?= base_url('admin/deleteAllProcesses'); ?>" method="post" data-loading="true" data-loading-title="Cleaning Database" data-loading-message="Deleting all process data...">
+                        <button type="submit" class="btn btn-danger btn-block shadow-sm" onclick="confirmDeleteAll(); return false;">
                             <i class="fas fa-bomb mr-2"></i>Delete All Process Data
                         </button>
                     </form>
@@ -226,8 +226,8 @@
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <button type="button" 
-                                                class="btn btn-danger btn-sm no-loading" 
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm mb-1"
                                                 onclick="confirmDeleteProcess(<?= $process['id']; ?>, '<?= $process['process_id']; ?>')"
                                                 title="Delete">
                                             <i class="fas fa-trash"></i>
@@ -251,40 +251,107 @@
 <script>
 // Make functions globally accessible
 window.confirmDeleteProcess = function(processId, processName) {
-    if (confirm('Are you sure you want to delete process ' + processName + ' and all related data?\n\nThis action cannot be undone!')) {
-        // Show loading
-        document.getElementById('loadingOverlayTitle').textContent = 'Deleting Process';
-        document.getElementById('loadingOverlayMessage').textContent = 'Deleting process ' + processName + '...';
-        document.getElementById('globalLoadingOverlay').style.display = 'flex';
-        
-        // Redirect to delete URL
-        window.location.href = '<?= base_url('admin/deleteProcess/'); ?>' + processId;
-    }
+    Swal.fire({
+        title: 'Delete Process?',
+        html: 'Are you sure you want to delete process <strong>' + processName + '</strong> and all related data?<br><br>This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '<i class="fas fa-trash mr-2"></i>Yes, Delete',
+        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+        customClass: {
+            popup: 'animated fadeInDown faster'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading AFTER modal closes
+            if (typeof window.showLoading === 'function') {
+                window.showLoading('Deleting Process', 'Deleting process ' + processName + '...');
+            } else {
+                document.getElementById('loadingOverlayTitle').textContent = 'Deleting Process';
+                document.getElementById('loadingOverlayMessage').textContent = 'Deleting process ' + processName + '...';
+                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+            }
+            
+            // Redirect to delete URL
+            window.location.href = '<?= base_url('admin/deleteProcess/'); ?>' + processId;
+        }
+    });
 };
 
 window.confirmKeepLatest = function() {
+    console.log('confirmKeepLatest function called');
     var keepCount = document.getElementById('keep_latest').value;
-    
-    if (confirm('Delete all processes except the latest ' + keepCount + '?\n\nThis action cannot be undone!')) {
-        // Show loading overlay
-        document.getElementById('loadingOverlayTitle').textContent = 'Cleaning Database';
-        document.getElementById('loadingOverlayMessage').textContent = 'Deleting old processes...';
-        document.getElementById('globalLoadingOverlay').style.display = 'flex';
-        
-        // Submit form
-        document.getElementById('formKeepLatest').submit();
-    }
+    console.log('keepCount:', keepCount);
+
+    Swal.fire({
+        title: 'Delete Old Processes?',
+        html: 'Delete all processes except the latest <strong>' + keepCount + '</strong>?<br><br>This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ffc107',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-trash-alt mr-2"></i>Yes, Delete',
+        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+        customClass: {
+            popup: 'animated fadeInDown faster'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading immediately
+            if (typeof window.showLoading === 'function') {
+                window.showLoading('Cleaning Database', 'Deleting old processes...');
+            } else {
+                document.getElementById('loadingOverlayTitle').textContent = 'Cleaning Database';
+                document.getElementById('loadingOverlayMessage').textContent = 'Deleting old processes...';
+                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+            }
+
+            // Submit form after a delay to ensure loading shows
+            setTimeout(function() {
+                document.getElementById('formKeepLatest').submit();
+            }, 500);
+        }
+    });
 };
 
 window.confirmDeleteAll = function() {
-    if (confirm('Are you sure you want to DELETE ALL process data?\n\nThis will remove:\n- All process logs\n- All itemsets (1, 2, 3)\n- All association rules\n\nThis action CANNOT be undone!')) {
-        // Show loading overlay
-        document.getElementById('loadingOverlayTitle').textContent = 'Cleaning Database';
-        document.getElementById('loadingOverlayMessage').textContent = 'Deleting all process data...';
-        document.getElementById('globalLoadingOverlay').style.display = 'flex';
-        
-        // Submit form
-        document.getElementById('formDeleteAll').submit();
-    }
+    Swal.fire({
+        title: 'Delete ALL Data?',
+        html: '<p class="text-danger font-weight-bold mb-3">Are you sure you want to DELETE ALL process data?</p>' +
+              '<p class="text-left mb-2">This will remove:</p>' +
+              '<ul class="text-left">' +
+              '<li>All process logs</li>' +
+              '<li>All itemsets (1, 2, 3)</li>' +
+              '<li>All association rules</li>' +
+              '</ul>' +
+              '<p class="text-danger font-weight-bold mt-3">This action CANNOT be undone!</p>',
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-bomb mr-2"></i>Yes, Delete Everything',
+        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+        customClass: {
+            popup: 'animated shake faster'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading immediately
+            if (typeof window.showLoading === 'function') {
+                window.showLoading('Cleaning Database', 'Deleting all process data...');
+            } else {
+                document.getElementById('loadingOverlayTitle').textContent = 'Cleaning Database';
+                document.getElementById('loadingOverlayMessage').textContent = 'Deleting all process data...';
+                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+            }
+
+            // Submit form after a delay to ensure loading shows
+            setTimeout(function() {
+                document.getElementById('formDeleteAll').submit();
+            }, 500);
+        }
+    });
 };
 </script>

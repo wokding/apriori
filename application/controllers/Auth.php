@@ -8,6 +8,39 @@ class Auth extends CI_Controller
         parent::__construct();
         $this->load->library('form_validation');
     }
+    
+    /**
+     * Clear old flashdata to prevent duplicate toast notifications
+     */
+    private function _clear_flashdata()
+    {
+        // Clear flashdata (both new and old)
+        $this->session->unset_userdata('success');
+        $this->session->unset_userdata('error');
+        $this->session->unset_userdata('__ci_vars');
+        
+        // Clear tempdata
+        $this->session->unset_tempdata('success');
+        $this->session->unset_tempdata('error');
+        
+        // Clear all flashdata-related keys
+        $all_userdata = $this->session->userdata();
+        foreach ($all_userdata as $key => $value) {
+            // Clear session markers
+            if (strpos($key, 'flashdata_shown_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear consumed markers
+            if (strpos($key, 'toast_consumed_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear CodeIgniter internal flashdata keys
+            if (strpos($key, '__ci_old_') === 0 || strpos($key, '__ci_new_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+        }
+    }
+    
     public function index()
     {
         if ($this->session->userdata('email')) {
@@ -45,20 +78,33 @@ class Auth extends CI_Controller
                         'role_id' => $user['role_id']
                     ];
                     $this->session->set_userdata($data);
+                    
+                    // Clear any old flashdata before setting new one
+                    $this->_clear_flashdata();
+                    
+                    // Set success message for login
+                    $this->session->set_flashdata('success', 'Welcome back! You have been logged in successfully.');
+                    
                     if ($user['role_id'] == 1) {
                         redirect('admin');
                     } else {
                         redirect('user');
                     }
                 } else {
+                    // Clear old flashdata
+                    $this->_clear_flashdata();
                     $this->session->set_flashdata('error', 'Wrong password!');
                     redirect('auth');
                 }
             } else {
+                // Clear old flashdata
+                $this->_clear_flashdata();
                 $this->session->set_flashdata('error', 'This email has not been activated!');
                 redirect('auth');
             }
         } else {
+            // Clear old flashdata
+            $this->_clear_flashdata();
             $this->session->set_flashdata('error', 'Email is not registered!');
             redirect('auth');
         }
@@ -96,24 +142,13 @@ class Auth extends CI_Controller
                 'role_id' => 2,
                 'is_active' => 0,
                 'date_created' => time()
-
-            ];
-
-            //Siapkan token
-            $token = base64_encode(random_bytes(32));
-            $user_token = [
-                'email' => $email,
-                'token' => $token,
-                'date_created' => time()
             ];
 
             $this->db->insert('user', $data);
-            $this->db->insert('user_token', $user_token);
 
-            $this->_sendEmail($token, 'verify');
-
-
-            $this->session->set_flashdata('success', 'Congratulation! Your account has been created. Please activate your account!');
+            // Clear old flashdata
+            $this->_clear_flashdata();
+            $this->session->set_flashdata('success', 'Registration successful! Please wait for administrator to activate your account.');
             redirect('auth');
         }
     }
@@ -199,6 +234,9 @@ class Auth extends CI_Controller
         $this->session->unset_userdata('email');
         $this->session->unset_userdata('role_id');
 
+        // Clear any old flashdata before setting new one
+        $this->_clear_flashdata();
+        
         $this->session->set_flashdata('success', 'You have been logged out successfully!');
         redirect('auth');
     }
@@ -228,9 +266,13 @@ class Auth extends CI_Controller
                 $this->db->where('email', $email);
                 $this->db->update('user');
 
+                // Clear old flashdata
+                $this->_clear_flashdata();
                 $this->session->set_flashdata('success', 'Password has been reset successfully! Your new password is: password123. Please login with your new password.');
                 redirect('auth');
             } else {
+                // Clear old flashdata
+                $this->_clear_flashdata();
                 $this->session->set_flashdata('error', 'Email is not registered or not activated!');
                 redirect('auth/forgotpassword');
             }

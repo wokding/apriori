@@ -41,10 +41,10 @@
                                             <strong><?= $m['menu']; ?></strong>
                                         </td>
                                         <td class="text-center">
-                                            <a href="" data-toggle="modal" data-target="#editMenuModal<?= $m['id'] ?>" class="btn btn-success btn-sm" title="Edit">
+                                            <a href="javascript:void(0);" class="btn btn-success btn-sm mr-1 mb-1 no-loading" title="Edit" onclick="confirmEditMenu(<?= $m['id']; ?>, '<?= htmlspecialchars($m['menu'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= base_url('menu/deleteMenu/' . $m['id']) ?>" class="btn btn-danger btn-sm delete-btn" data-confirm="Are you sure you want to delete <?= $m['menu']; ?>?" title="Delete">
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm mb-1 no-loading" title="Delete" onclick="confirmDeleteMenu(<?= $m['id']; ?>, '<?= htmlspecialchars($m['menu'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </td>
@@ -137,3 +137,104 @@
                     </div>
                 <?php endforeach; ?>
                 <!-- End edit Modal -->
+
+                <!-- Modal Edit Menu Confirmation -->
+                <div class="modal fade" id="editMenuConfirmModal" tabindex="-1" aria-labelledby="editMenuConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="editMenuConfirmModalLabel">
+                                    <i class="fas fa-edit mr-2"></i>Edit Menu
+                                </h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="mb-0">Are you sure you want to edit menu <strong><span id="edit_menu_name"></span></strong>?</p>
+                                <small class="text-muted">You will be able to modify the menu details.</small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i>Cancel
+                                </button>
+                                <button type="button" class="btn btn-success" id="confirmEditMenuBtn">
+                                    <i class="fas fa-edit mr-1"></i>Yes, Edit Menu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                // Make functions globally accessible
+                window.confirmEditMenu = function(menuId, menuName) {
+                    Swal.fire({
+                        title: 'Edit Menu?',
+                        html: 'Are you sure you want to edit menu <strong>' + menuName + '</strong>?<br><br>You will be able to modify the menu details.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-edit mr-2"></i>Yes, Edit Menu',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated fadeInDown faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Loading Menu Editor', 'Opening menu edit form...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Loading Menu Editor';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Opening menu edit form...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Open edit modal after a delay to ensure loading shows
+                            setTimeout(function() {
+                                $('#editMenuModal' + menuId).modal('show');
+                                // Hide loading when modal is shown
+                                if (typeof window.hideLoading === 'function') {
+                                    window.hideLoading();
+                                } else {
+                                    document.getElementById('globalLoadingOverlay').style.display = 'none';
+                                }
+                            }, 500);
+                        }
+                    });
+                };
+
+                window.confirmDeleteMenu = function(menuId, menuName) {
+                    Swal.fire({
+                        title: 'Delete Menu?',
+                        html: 'Are you sure you want to delete menu <strong>' + menuName + '</strong>?<br><br>This action cannot be undone!',
+                        icon: 'error',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-trash-alt mr-2"></i>Yes, Delete',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated shake faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Deleting Menu', 'Please wait while we delete the menu...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Deleting Menu';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Please wait while we delete the menu...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Redirect after a delay to ensure loading shows
+                            setTimeout(function() {
+                                window.location.href = '<?php echo site_url('menu/deleteMenu/'); ?>' + menuId;
+                            }, 500);
+                        }
+                    });
+                };
+                </script>

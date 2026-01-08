@@ -31,7 +31,7 @@ We are committed to providing a welcoming and inclusive environment for everyone
 ## 🚀 Getting Started
 
 ### Prerequisites
-- PHP >= 7.2
+- PHP >= 8.1 (aktifkan ekstensi mbstring, openssl, zip)
 - MySQL >= 5.7
 - Composer
 - Git

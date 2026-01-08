@@ -2288,7 +2288,8 @@ INSERT INTO `user_access_menu` (`id`, `role_id`, `menu_id`) VALUES
 (1, 1, 1),
 (3, 2, 2),
 (4, 1, 3),
-(10, 1, 2);
+(10, 1, 2),
+(11, 2, 4);
 
 -- --------------------------------------------------------
 
@@ -2308,7 +2309,8 @@ CREATE TABLE `user_menu` (
 INSERT INTO `user_menu` (`id`, `menu`) VALUES
 (1, 'Admin'),
 (2, 'User'),
-(3, 'Menu');
+(3, 'Menu'),
+(4, 'Report');
 
 -- --------------------------------------------------------
 
@@ -2358,7 +2360,11 @@ INSERT INTO `user_sub_menu` (`id`, `menu_id`, `title`, `url`, `icon`, `is_active
 (9, 2, 'Change Password', 'user/changepassword', 'fas fa-fw fa-key', 1),
 (22, 1, 'Data Transaksi', 'admin/datatransaksi', 'fas fa-fw fa-database', 1),
 (23, 1, 'Proses Apriori', 'admin/prosesapriori', 'fas fa-fw fa-cogs', 1),
-(24, 1, 'Hasil', 'admin/hasil', 'fas fa-fw fa-print', 1);
+(24, 1, 'Hasil', 'admin/hasil', 'fas fa-fw fa-print', 1),
+(25, 1, 'User Management', 'admin/users', 'fas fa-fw fa-users', 1),
+(26, 1, 'Database Cleanup', 'admin/cleanup', 'fas fa-fw fa-broom', 1),
+(27, 4, 'Proses Apriori', 'admin/prosesapriori', 'fas fa-fw fa-cogs', 1),
+(28, 4, 'Hasil', 'admin/hasil', 'fas fa-fw fa-print', 1);
 
 -- --------------------------------------------------------
 

@@ -8,17 +8,87 @@
 <!-- Custom scripts for all pages-->
 <script src="<?= base_url('assets/'); ?>js/sb-admin-2.min.js"></script>
 
+<!-- Toastr for Toast Notifications -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <!-- Custom Enhanced Scripts -->
 <script src="<?= base_url('assets/'); ?>js/custom-enhanced.js"></script>
 
+<!-- Loading Indicator Script -->
+<script src="<?= base_url('assets/'); ?>js/loading-indicator.js"></script>
+
+<!-- Toast Flashdata Handler for Auth Pages -->
+<?php 
+// Get flashdata ONCE - this consumes it from session
+$success_msg = $this->session->flashdata('success');
+$error_msg = $this->session->flashdata('error');
+
+// Create hash of message to track if already displayed
+$message_hash = md5($success_msg . $error_msg);
+$consumed_key = 'toast_consumed_' . $message_hash;
+
+// Check if this message was already consumed (displayed)
+$already_consumed = $this->session->userdata($consumed_key);
+
+// Only output script if there's a message AND it hasn't been consumed yet
+if (($success_msg || $error_msg) && !$already_consumed) :
+    // Mark this message as consumed so it won't show again
+    $this->session->set_userdata($consumed_key, time());
+    
+    // Clean up old consumed markers (older than 5 minutes)
+    $all_userdata = $this->session->userdata();
+    foreach ($all_userdata as $key => $value) {
+        if (strpos($key, 'toast_consumed_') === 0 && is_numeric($value) && (time() - $value) > 300) {
+            $this->session->unset_userdata($key);
+        }
+    }
+?>
+<script>
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof toastr === 'undefined') return;
+        
+        // Configure toastr options
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        <?php if ($success_msg) : ?>
+        toastr.success(<?= json_encode($success_msg); ?>);
+        <?php endif; ?>
+
+        <?php if ($error_msg) : ?>
+        toastr.error(<?= json_encode($error_msg); ?>);
+        <?php endif; ?>
+    });
+})();
+</script>
+<?php endif; ?>
+
 <!-- Global Loading Overlay for Auth Pages -->
-<div id="globalLoadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-        <div class="spinner-border text-light" style="width: 4rem; height: 4rem;" role="status">
-            <span class="sr-only">Loading...</span>
+<div id="globalLoadingOverlay" class="global-loading-overlay" style="display: none;">
+    <div class="loading-content">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
         </div>
-        <h3 class="text-white mt-3" id="loadingOverlayTitle">Processing...</h3>
-        <p class="text-white" id="loadingOverlayMessage">Please wait while we process your request.</p>
+        <h3 id="loadingOverlayTitle">Processing...</h3>
+        <p id="loadingOverlayMessage">Please wait while we process your request.</p>
     </div>
 </div>
 

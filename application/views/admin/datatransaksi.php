@@ -65,10 +65,10 @@
                                             Rp <?= number_format($dt['total'], 0, ',', '.'); ?>
                                         </td>
                                         <td class="text-center">
-                                            <a href="" data-toggle="modal" data-target="#editDataTransaksiModal<?= $dt['id'] ?>" class="btn btn-success btn-sm" title="Edit">
+                                            <a href="javascript:void(0);" class="btn btn-success btn-sm mr-1 mb-1 no-loading" title="Edit" onclick="confirmEditTransaction(<?= $dt['id']; ?>, '<?= htmlspecialchars($dt['id_transaksi'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= base_url('admin/deleteDataTransaksi/' . $dt['id']) ?>" class="btn btn-danger btn-sm delete-btn" data-confirm="Are you sure you want to delete transaction <?= $dt['id_transaksi']; ?>?" title="Delete">
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm mb-1 no-loading" title="Delete" onclick="confirmDeleteTransaction(<?= $dt['id']; ?>, '<?= htmlspecialchars($dt['id_transaksi'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </td>
@@ -235,3 +235,132 @@
                     </div>
                 <?php endforeach; ?>
                 <!-- End edit Modal -->
+
+                <!-- Edit Transaction Confirmation Modal -->
+                <div class="modal fade" id="editTransactionConfirmModal" tabindex="-1" aria-labelledby="editTransactionConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="editTransactionConfirmModalLabel">
+                                    <i class="fas fa-edit mr-2"></i>Edit Transaction
+                                </h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="mb-0">Are you sure you want to edit transaction <strong><span id="edit_transaction_id"></span></strong>?</p>
+                                <small class="text-muted">You will be able to modify the transaction details.</small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i>Cancel
+                                </button>
+                                <button type="button" class="btn btn-success" id="confirmEditTransactionBtn">
+                                    <i class="fas fa-edit mr-1"></i>Yes, Edit Transaction
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteTransactionModal" tabindex="-1" aria-labelledby="deleteTransactionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="deleteTransactionModalLabel">
+                                    <i class="fas fa-trash-alt mr-2"></i>Delete Transaction
+                                </h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="mb-0">Are you sure you want to delete transaction <strong><span id="delete_transaction_id"></span></strong>?</p>
+                                <small class="text-muted">This action cannot be undone.</small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i>Cancel
+                                </button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteTransactionBtn">
+                                    <i class="fas fa-trash-alt mr-1"></i>Yes, Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                // Make functions globally accessible
+                window.confirmEditTransaction = function(transactionId, transactionCode) {
+                    Swal.fire({
+                        title: 'Edit Transaction?',
+                        html: 'Are you sure you want to edit transaction <strong>' + transactionCode + '</strong>?<br><br>You will be able to modify the transaction details.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-edit mr-2"></i>Yes, Edit Transaction',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated fadeInDown faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Loading Transaction Editor', 'Opening transaction edit form...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Loading Transaction Editor';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Opening transaction edit form...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Open edit modal after a delay to ensure loading shows
+                            setTimeout(function() {
+                                $('#editDataTransaksiModal' + transactionId).modal('show');
+                                // Hide loading when modal is shown
+                                if (typeof window.hideLoading === 'function') {
+                                    window.hideLoading();
+                                } else {
+                                    document.getElementById('globalLoadingOverlay').style.display = 'none';
+                                }
+                            }, 500);
+                        }
+                    });
+                };
+
+                window.confirmDeleteTransaction = function(transactionId, transactionCode) {
+                    Swal.fire({
+                        title: 'Delete Transaction?',
+                        html: 'Are you sure you want to delete transaction <strong>' + transactionCode + '</strong>?<br><br>This action cannot be undone!',
+                        icon: 'error',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-trash-alt mr-2"></i>Yes, Delete',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated shake faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Deleting Transaction', 'Please wait while we delete the transaction...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Deleting Transaction';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Please wait while we delete the transaction...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Redirect after a delay to ensure loading shows
+                            setTimeout(function() {
+                                window.location.href = '<?php echo site_url('admin/deleteDataTransaksi/'); ?>' + transactionId;
+                            }, 500);
+                        }
+                    });
+                };
+                </script>

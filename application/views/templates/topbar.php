@@ -83,3 +83,65 @@
 
         </nav>
         <!-- End of Topbar -->
+
+        <!-- Toast Container (will be populated by toastr.js) -->
+        <?php 
+        // Get flashdata ONCE - this consumes it from session
+        $success_msg = $this->session->flashdata('success');
+        $error_msg = $this->session->flashdata('error');
+        
+        // Create hash of message to track if already displayed
+        $message_hash = md5($success_msg . $error_msg);
+        $consumed_key = 'toast_consumed_' . $message_hash;
+        
+        // Check if this message was already consumed (displayed)
+        $already_consumed = $this->session->userdata($consumed_key);
+        
+        // Only output script if there's a message AND it hasn't been consumed yet
+        if (($success_msg || $error_msg) && !$already_consumed) :
+            // Mark this message as consumed so it won't show again
+            $this->session->set_userdata($consumed_key, time());
+            
+            // Clean up old consumed markers (older than 5 minutes)
+            $all_userdata = $this->session->userdata();
+            foreach ($all_userdata as $key => $value) {
+                if (strpos($key, 'toast_consumed_') === 0 && is_numeric($value) && (time() - $value) > 300) {
+                    $this->session->unset_userdata($key);
+                }
+            }
+        ?>
+        <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof toastr === 'undefined') return;
+                
+                // Configure toastr options
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": true,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+
+                <?php if ($success_msg) : ?>
+                toastr.success(<?= json_encode($success_msg); ?>);
+                <?php endif; ?>
+
+                <?php if ($error_msg) : ?>
+                toastr.error(<?= json_encode($error_msg); ?>);
+                <?php endif; ?>
+            });
+        })();
+        </script>
+        <?php endif; ?>

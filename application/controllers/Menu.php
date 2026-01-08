@@ -10,6 +10,38 @@ class Menu extends CI_Controller
         $this->load->model('Menu_model', 'menu');
     }
 
+    /**
+     * Clear old flashdata and session markers to prevent duplicate toast
+     */
+    private function _clear_flashdata()
+    {
+        // Clear flashdata (both new and old)
+        $this->session->unset_userdata('success');
+        $this->session->unset_userdata('error');
+        $this->session->unset_userdata('__ci_vars');
+        
+        // Clear tempdata
+        $this->session->unset_tempdata('success');
+        $this->session->unset_tempdata('error');
+        
+        // Clear all flashdata-related keys
+        $all_userdata = $this->session->userdata();
+        foreach ($all_userdata as $key => $value) {
+            // Clear session markers
+            if (strpos($key, 'flashdata_shown_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear consumed markers
+            if (strpos($key, 'toast_consumed_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+            // Clear CodeIgniter internal flashdata keys
+            if (strpos($key, '__ci_old_') === 0 || strpos($key, '__ci_new_') === 0) {
+                $this->session->unset_userdata($key);
+            }
+        }
+    }
+
     public function index()
     {
         $data['title'] = 'Menu Management';
@@ -27,6 +59,7 @@ class Menu extends CI_Controller
             $this->load->view('templates/footer');
         } else {
             $this->db->insert('user_menu', ['menu' => $this->input->post('menu')]);
+            $this->_clear_flashdata();
             $this->session->set_flashdata('success', 'New menu added successfully!');
             redirect('menu');
         }
@@ -61,6 +94,7 @@ class Menu extends CI_Controller
                 'is_active' => $this->input->post('is_active')
             ];
             $this->db->insert('user_sub_menu', $data);
+            $this->_clear_flashdata();
             $this->session->set_flashdata('success', 'New submenu added successfully!');
             redirect('menu/submenu');
         }
@@ -69,6 +103,7 @@ class Menu extends CI_Controller
     public function editMenu($id)
     {
         $this->db->update('user_menu', ['menu' => $this->input->post('menu')], ['id' => $id]);
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Menu has been updated successfully!');
         redirect('menu');
     }
@@ -77,6 +112,7 @@ class Menu extends CI_Controller
     {
         $this->db->delete('user_menu', ['id' => $id]);
         $this->db->delete('user_sub_menu', ['menu_id' => $id]);
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Menu has been deleted successfully!');
         redirect('menu');
     }
@@ -85,6 +121,7 @@ class Menu extends CI_Controller
     {
         $this->menu->saveSubMenu($id);
 
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Submenu has been updated successfully!');
         redirect('menu/submenu');
     }
@@ -92,6 +129,7 @@ class Menu extends CI_Controller
     public function deleteSubMenu($id)
     {
         $this->menu->deleteSubMenu($id);
+        $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Submenu has been deleted successfully!');
         redirect('menu/submenu');
     }

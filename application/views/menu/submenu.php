@@ -66,10 +66,10 @@
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center">
-                                            <a href="" data-toggle="modal" data-target="#editSubMenuModal<?= $sm['id'] ?>" class="btn btn-success btn-sm" title="Edit">
+                                            <a href="javascript:void(0);" class="btn btn-success btn-sm mr-1 mb-1 no-loading" title="Edit" onclick="confirmEditSubMenu(<?= $sm['id']; ?>, '<?= htmlspecialchars($sm['title'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= base_url('menu/deleteSubMenu/' . $sm['id']) ?>" class="btn btn-danger btn-sm delete-btn" data-confirm="Are you sure you want to delete <?= $sm['title']; ?>?" title="Delete">
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm mb-1 no-loading" title="Delete" onclick="confirmDeleteSubMenu(<?= $sm['id']; ?>, '<?= htmlspecialchars($sm['title'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </td>
@@ -222,3 +222,132 @@
                     </div>
                 <?php endforeach; ?>
                 <!-- End Edit Modal -->
+
+                <!-- Modal Edit SubMenu Confirmation -->
+                <div class="modal fade" id="editSubMenuConfirmModal" tabindex="-1" aria-labelledby="editSubMenuConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="editSubMenuConfirmModalLabel">
+                                    <i class="fas fa-edit mr-2"></i>Edit SubMenu
+                                </h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="mb-0">Are you sure you want to edit submenu <strong><span id="edit_submenu_name"></span></strong>?</p>
+                                <small class="text-muted">You will be able to modify the submenu details.</small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i>Cancel
+                                </button>
+                                <button type="button" class="btn btn-success" id="confirmEditSubMenuBtn">
+                                    <i class="fas fa-edit mr-1"></i>Yes, Edit SubMenu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteSubMenuModal" tabindex="-1" aria-labelledby="deleteSubMenuModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="deleteSubMenuModalLabel">
+                                    <i class="fas fa-trash-alt mr-2"></i>Delete SubMenu
+                                </h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="mb-0">Are you sure you want to delete submenu <strong><span id="delete_submenu_name"></span></strong>?</p>
+                                <small class="text-muted">This action cannot be undone.</small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i>Cancel
+                                </button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteSubMenuBtn">
+                                    <i class="fas fa-trash-alt mr-1"></i>Yes, Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                // Make functions globally accessible
+                window.confirmEditSubMenu = function(subMenuId, subMenuName) {
+                    Swal.fire({
+                        title: 'Edit SubMenu?',
+                        html: 'Are you sure you want to edit submenu <strong>' + subMenuName + '</strong>?<br><br>You will be able to modify the submenu details.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-edit mr-2"></i>Yes, Edit SubMenu',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated fadeInDown faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Loading SubMenu Editor', 'Opening submenu edit form...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Loading SubMenu Editor';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Opening submenu edit form...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Open edit modal after a delay to ensure loading shows
+                            setTimeout(function() {
+                                $('#editSubMenuModal' + subMenuId).modal('show');
+                                // Hide loading when modal is shown
+                                if (typeof window.hideLoading === 'function') {
+                                    window.hideLoading();
+                                } else {
+                                    document.getElementById('globalLoadingOverlay').style.display = 'none';
+                                }
+                            }, 500);
+                        }
+                    });
+                };
+
+                window.confirmDeleteSubMenu = function(subMenuId, subMenuName) {
+                    Swal.fire({
+                        title: 'Delete SubMenu?',
+                        html: 'Are you sure you want to delete submenu <strong>' + subMenuName + '</strong>?<br><br>This action cannot be undone!',
+                        icon: 'error',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-trash-alt mr-2"></i>Yes, Delete',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated shake faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Deleting SubMenu', 'Please wait while we delete the submenu...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Deleting SubMenu';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Please wait while we delete the submenu...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Redirect after a delay to ensure loading shows
+                            setTimeout(function() {
+                                window.location.href = '<?php echo site_url('menu/deleteSubMenu/'); ?>' + subMenuId;
+                            }, 500);
+                        }
+                    });
+                };
+                </script>

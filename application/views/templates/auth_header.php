@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1.0, user-scalable=yes">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="description" content="Authentication - Apriori Kimia Farma">
     <meta name="author" content="Kimia Farma">
     <meta name="theme-color" content="#667eea">
@@ -26,12 +29,39 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.min.css">
 
+    <!-- Toastr for Toast Notifications -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    
+    <!-- Toast Override CSS -->
+    <link href="<?= base_url('assets/'); ?>css/toast-override.css" rel="stylesheet">
+
     <!-- Custom styles for this template-->
     <link href="<?= base_url('assets/'); ?>css/sb-admin-2.min.css" rel="stylesheet">
     
     <!-- Custom Enhanced Styles -->
     <link href="<?= base_url('assets/'); ?>css/custom-style.css" rel="stylesheet">
+    
+    <!-- Loading Indicator Styles -->
+    <link href="<?= base_url('assets/'); ?>css/loading-indicator.css" rel="stylesheet">
 
 </head>
 
 <body class="auth-wrapper">
+
+<!-- Page Loading Indicator -->
+<div class="page-loading-indicator" id="pageLoadingIndicator">
+    <div class="loading-content">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-logo">
+            <i class="fas fa-capsules"></i>
+        </div>
+        <h3>Loading...</h3>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+</div>

@@ -57,14 +57,15 @@
 
 
  <div style="text-align:center;">
- 	<div style="margin-bottom:-50px;">
- 		<?php
+	<div style="margin-bottom:-50px;">
+		<?php
 			$logo_path = FCPATH . 'assets/img/kimiafarma.png';
 			if (file_exists($logo_path)) {
-				echo '<img src="' . base_url('assets/img/kimiafarma.png') . '" width="300" height="150">';
+				$logo_data = base64_encode(file_get_contents($logo_path));
+				echo '<img src="data:image/png;base64,' . $logo_data . '" width="300" height="150">';
 			}
 		?>
- 	</div>
+	</div>
  	<center>
  		<h1>APOTEK KIMIA FARMA SUMMARECON BEKASI</h1>
  	</center>

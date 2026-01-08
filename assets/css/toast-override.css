@@ -1,0 +1,41 @@
+/**
+ * Toast Override CSS
+ * Ensure custom toast is completely removed and only toastr.js is used
+ */
+
+/* Remove any custom toast container if exists */
+#toast-container.custom {
+    display: none !important;
+}
+
+.custom-toast {
+    display: none !important;
+}
+
+/* Ensure toastr container is properly styled */
+#toast-container > div {
+    opacity: 1 !important;
+}
+
+/* Additional toastr customization for consistency */
+.toast {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
+}
+
+.toast-success {
+    background-color: #28a745 !important;
+}
+
+.toast-error {
+    background-color: #dc3545 !important;
+}
+
+.toast-info {
+    background-color: #17a2b8 !important;
+}
+
+.toast-warning {
+    background-color: #ffc107 !important;
+    color: #333 !important;
+}
