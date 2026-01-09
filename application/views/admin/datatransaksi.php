@@ -31,7 +31,7 @@
                         <a href="" class="btn btn-success shadow-sm" data-toggle="modal" data-target="#importTransaksiModal">
                             <i class="fas fa-file-import fa-sm mr-2"></i>Import Data
                         </a>
-                        <a href="<?= base_url('admin/deleteAllDataTransaksi/') ?>" class="btn btn-danger shadow-sm delete-btn" data-confirm="Are you sure you want to delete ALL transaction data? This action cannot be undone!">
+                        <a href="javascript:void(0);" class="btn btn-danger shadow-sm no-loading" onclick="confirmDeleteAllTransactions()">
                             <i class="fas fa-trash-alt fa-sm mr-2"></i>Delete All Data
                         </a>
                     </div>
@@ -359,6 +359,38 @@
                             // Redirect after a delay to ensure loading shows
                             setTimeout(function() {
                                 window.location.href = '<?php echo site_url('admin/deleteDataTransaksi/'); ?>' + transactionId;
+                            }, 500);
+                        }
+                    });
+                };
+
+                window.confirmDeleteAllTransactions = function() {
+                    Swal.fire({
+                        title: 'Delete ALL Transactions?',
+                        html: '<strong class="text-danger">WARNING!</strong><br><br>Are you sure you want to delete <strong>ALL</strong> transaction data?<br><br>This will <strong>permanently delete</strong> all transactions from the database!<br><br>This action <strong>CANNOT</strong> be undone!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-trash-alt mr-2"></i>Yes, Delete All',
+                        cancelButtonText: '<i class="fas fa-times mr-2"></i>Cancel',
+                        customClass: {
+                            popup: 'animated shake faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading immediately
+                            if (typeof window.showLoading === 'function') {
+                                window.showLoading('Deleting All Transactions', 'Please wait while we delete all transactions...');
+                            } else {
+                                document.getElementById('loadingOverlayTitle').textContent = 'Deleting All Transactions';
+                                document.getElementById('loadingOverlayMessage').textContent = 'Please wait while we delete all transactions...';
+                                document.getElementById('globalLoadingOverlay').style.display = 'flex';
+                            }
+
+                            // Redirect after a delay to ensure loading shows
+                            setTimeout(function() {
+                                window.location.href = '<?php echo site_url('admin/deleteAllDataTransaksi'); ?>';
                             }, 500);
                         }
                     });
