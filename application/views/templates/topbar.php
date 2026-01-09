@@ -17,6 +17,34 @@
                 <span class="text-primary font-weight-bold"><?= $title; ?></span>
             </div>
 
+            <?php
+            $CI = get_instance();
+            $is_admin = isset($user['role_id']) && (int)$user['role_id'] === 1;
+            $notif_items = [];
+            $notif_count = 0;
+
+            if ($is_admin) {
+                $notif_items = $CI->db
+                    ->select('name,email,date_created')
+                    ->where('is_active', 0)
+                    ->order_by('date_created', 'DESC')
+                    ->limit(5)
+                    ->get('user')
+                    ->result_array();
+                $notif_count = $CI->db->where('is_active', 0)->from('user')->count_all_results();
+            } else {
+                // Untuk member: tampilkan pesan aktif, badge 1x lalu hilang setelah dibuka (via JS/localStorage)
+                $notif_items = [
+                    [
+                        'title' => 'Akun aktif',
+                        'subtitle' => 'Admin telah mengaktifkan akun Anda',
+                        'date_created' => time()
+                    ]
+                ];
+                $notif_count = 1; // badge muncul, di-hide oleh JS setelah dibuka
+            }
+            ?>
+
             <!-- Topbar Navbar -->
             <ul class="navbar-nav ml-auto">
 
@@ -24,26 +52,43 @@
                 <li class="nav-item dropdown no-arrow mx-1 d-none d-sm-block">
                     <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-bell fa-fw"></i>
-                        <!-- Counter - Alerts -->
-                        <span class="badge badge-danger badge-counter d-none">3+</span>
+                        <?php if ($notif_count > 0) : ?>
+                            <span class="badge badge-danger badge-counter" id="notifBadge" data-role="<?= $is_admin ? 'admin' : 'member'; ?>"><?= $notif_count > 9 ? '9+' : $notif_count; ?></span>
+                        <?php endif; ?>
                     </a>
                     <!-- Dropdown - Alerts -->
-                    <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in d-none" aria-labelledby="alertsDropdown">
+                    <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                         <h6 class="dropdown-header">
-                            Alerts Center
+                            <?= $is_admin ? 'Registrasi menunggu aktivasi' : 'Notifikasi Akun'; ?>
                         </h6>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
-                            <div class="mr-3">
-                                <div class="icon-circle bg-primary">
-                                    <i class="fas fa-file-alt text-white"></i>
+                        <?php if (empty($notif_items)) : ?>
+                            <span class="dropdown-item small text-gray-500">Tidak ada notifikasi</span>
+                        <?php else : ?>
+                            <?php foreach ($notif_items as $item) : ?>
+                            <div class="dropdown-item d-flex align-items-center">
+                                <div class="mr-3">
+                                    <div class="icon-circle <?= $is_admin ? 'bg-warning' : 'bg-success'; ?>">
+                                        <i class="fas fa-user-plus text-white"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="small text-gray-500">
+                                        <?= date('d M Y H:i', $item['date_created']); ?>
+                                    </div>
+                                    <?php if ($is_admin) : ?>
+                                        <div class="font-weight-bold text-gray-800">Pending: <?= htmlspecialchars($item['name']); ?></div>
+                                        <div class="text-gray-600 small">Email: <?= htmlspecialchars($item['email']); ?></div>
+                                    <?php else : ?>
+                                        <div class="font-weight-bold text-gray-800"><?= $item['title']; ?></div>
+                                        <div class="text-gray-600 small"><?= $item['subtitle']; ?></div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                            <div>
-                                <div class="small text-gray-500">December 12, 2025</div>
-                                <span class="font-weight-bold">New data processed</span>
-                            </div>
-                        </a>
-                        <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                        <?php if ($is_admin && $notif_count > 0) : ?>
+                            <a class="dropdown-item text-center small text-primary" href="<?= base_url('admin/users'); ?>">Kelola aktivasi</a>
+                        <?php endif; ?>
                     </div>
                 </li>
 
@@ -83,6 +128,40 @@
 
         </nav>
         <!-- End of Topbar -->
+
+        <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                var badge = document.getElementById('notifBadge');
+                if (!badge) return;
+
+                // Only apply auto-hide for member
+                if (badge.dataset.role === 'member') {
+                    var seenKey = 'notif_member_seen';
+                    var hideBadge = function() { badge.classList.add('d-none'); };
+
+                    // Hide if already seen in this browser
+                    if (localStorage.getItem(seenKey)) {
+                        hideBadge();
+                    }
+
+                    // When dropdown opened/clicked, mark as seen and hide badge
+                    var dropdown = document.getElementById('alertsDropdown');
+                    if (dropdown) {
+                        var markSeen = function() {
+                            localStorage.setItem(seenKey, '1');
+                            hideBadge();
+                        };
+                        dropdown.addEventListener('click', markSeen);
+                        // For Bootstrap event (if available)
+                        if (typeof jQuery !== 'undefined' && typeof $.fn.dropdown !== 'undefined') {
+                            $(dropdown).on('show.bs.dropdown', markSeen);
+                        }
+                    }
+                }
+            });
+        })();
+        </script>
 
         <!-- Toast Container (will be populated by toastr.js) -->
         <?php 

@@ -474,12 +474,20 @@ class Admin extends CI_Controller
         $data['title'] = 'Hasil - View Rule';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
+        // Suppress deprecated notices during PDF rendering to avoid polluting output
+        $prevReporting = error_reporting();
+        $prevDisplay   = ini_get('display_errors');
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+        ini_set('display_errors', 0);
+
         // Generate HTML
         ob_start();
         $this->load->view('admin/view_rule_pdf', $data);
         $html = ob_get_clean();
 
         // Include Dompdf library
+        ini_set('memory_limit', '512M'); // bump memory for PDF rendering
+        ini_set('max_execution_time', '120'); // allow more time for heavy render
         require_once(APPPATH . '../vendor/autoload.php');
 
         // Allow image loading from filesystem/base_url and enable HTML5 parser for better rendering
@@ -487,12 +495,17 @@ class Admin extends CI_Controller
         $dompdfOptions->set('isRemoteEnabled', true);
         $dompdfOptions->set('isHtml5ParserEnabled', true);
         $dompdfOptions->setChroot(FCPATH);
+        $dompdfOptions->set('isFontSubsettingEnabled', true);
 
         $dompdf = new Dompdf\Dompdf($dompdfOptions);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-        $dompdf->stream('Hasil_Rule_' . $id . '.pdf', array('Attachment' => 0));
+        $dompdf->stream('Hasil_Rule_' . $id . '.pdf', array('Attachment' => 1)); // force download
+
+        // Restore error settings
+        error_reporting($prevReporting);
+        ini_set('display_errors', $prevDisplay);
         exit;
     }
 
