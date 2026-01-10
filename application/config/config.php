@@ -24,7 +24,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 // Auto-detect base URL for local vs hosting
-// Local dev: fallback to localhost:8000; Production: use current host
+// Local dev: root since server runs from project directory; Production: root
 if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
 	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 	$config['base_url'] = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/';
@@ -42,7 +42,18 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
 | variable so that it is blank.
 |
 */
-$config['index_page'] = '';
+// Set index_page based on environment
+// Local dev (PHP built-in server): include index.php; Production: blank
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
+    $host = $_SERVER['HTTP_HOST'];
+    if (strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false) {
+        $config['index_page'] = 'index.php';
+    } else {
+        $config['index_page'] = '';
+    }
+} else {
+    $config['index_page'] = 'index.php';
+}
 
 /*
 |--------------------------------------------------------------------------

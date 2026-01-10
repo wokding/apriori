@@ -62,7 +62,7 @@
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">
                     <i class="fas fa-times mr-2"></i>Cancel
                 </button>
-                <a class="btn btn-primary" href="<?= base_url('auth/logout'); ?>">
+                <a class="btn btn-primary" href="<?= site_url('auth/logout'); ?>">
                     <i class="fas fa-sign-out-alt mr-2"></i>Logout
                 </a>
             </div>

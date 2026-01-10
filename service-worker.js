@@ -67,29 +67,39 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
-    
+
     // Skip cross-origin requests
     if (url.origin !== location.origin) {
         return;
     }
-    
+
     // Skip POST, PUT, DELETE requests
     if (request.method !== 'GET') {
         return;
     }
-    
+
+    // Skip logout requests to avoid redirect issues
+    if (url.pathname.includes('/auth/logout')) {
+        return;
+    }
+
+    // Skip requests that are not for navigation or document
+    if (request.destination !== 'document' && request.destination !== 'empty') {
+        return;
+    }
+
     // Network First for API calls
     if (url.pathname.includes('/api/') || url.pathname.includes('/admin/')) {
         event.respondWith(networkFirst(request));
         return;
     }
-    
+
     // Cache First for static assets
     if (url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|gif|woff|woff2|ttf|eot)$/)) {
         event.respondWith(cacheFirst(request));
         return;
     }
-    
+
     // Stale While Revalidate for HTML pages
     event.respondWith(staleWhileRevalidate(request));
 });
@@ -100,9 +110,9 @@ async function cacheFirst(request) {
     if (cachedResponse) {
         return cachedResponse;
     }
-    
+
     try {
-        const networkResponse = await fetch(request);
+        const networkResponse = await fetch(request, { redirect: 'follow' });
         if (networkResponse.ok) {
             const cache = await caches.open(RUNTIME_CACHE);
             cache.put(request, networkResponse.clone());
@@ -135,8 +145,8 @@ async function networkFirst(request) {
 // Stale While Revalidate Strategy
 async function staleWhileRevalidate(request) {
     const cachedResponse = await caches.match(request);
-    
-    const fetchPromise = fetch(request).then((networkResponse) => {
+
+    const fetchPromise = fetch(request, { redirect: 'follow' }).then((networkResponse) => {
         if (networkResponse.ok) {
             const cache = caches.open(RUNTIME_CACHE);
             cache.then((c) => c.put(request, networkResponse.clone()));
@@ -145,7 +155,7 @@ async function staleWhileRevalidate(request) {
     }).catch(() => {
         return caches.match('/offline.html');
     });
-    
+
     return cachedResponse || fetchPromise;
 }
 
