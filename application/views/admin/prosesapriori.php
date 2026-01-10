@@ -26,14 +26,7 @@
                             <label class="font-weight-bold">
                                 <i class="fas fa-calendar-alt mr-2 text-primary"></i>Transaction Date Range
                             </label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-primary text-white">
-                                        <i class="fas fa-calendar"></i>
-                                    </span>
-                                </div>
-                                <input type="text" name="range_tanggal" id="reservation" class="form-control daterange" placeholder="Select date range..." required />
-                            </div>
+                            <input type="text" name="range_tanggal" id="reservation" class="form-control daterange" placeholder="Select date range..." required style="display: none;" />
                             <small class="form-text text-muted">
                                 <i class="fas fa-info-circle mr-1"></i>Select the date range for transactions to process. You can select 1 year or more - larger ranges will take longer to process (5-30 minutes).
                             </small>
@@ -129,6 +122,41 @@
 
 </div>
 <!-- End of Main Content -->
+
+<style>
+/* Mobile-specific optimizations for date picker */
+@media (max-width: 576px) {
+    .daterangepicker {
+        width: 90vw !important;
+        left: 5vw !important;
+    }
+    
+    /* Compact form on mobile */
+    .card-body .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .card-body .form-group small {
+        font-size: 0.75rem;
+    }
+    
+    /* Make input text smaller on mobile */
+    .form-control {
+        font-size: 0.9rem;
+    }
+    
+    /* Adjust icons */
+    .input-group-text i {
+        font-size: 0.85rem;
+    }
+}
+
+/* Improve daterange input visibility */
+.daterange {
+    width: 100%;
+    text-align: left;
+}
+</style>
 
 <script>
 $(document).ready(function() {

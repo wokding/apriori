@@ -32,6 +32,7 @@
 
     <!-- Date Range Picker -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" onerror="this.remove()">
+    <link href="<?= base_url('assets/'); ?>daterange/daterange.css" rel="stylesheet" type="text/css">
     <link href="<?= base_url('assets/'); ?>bootstrap-datepicker-1.9.0/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
 
     <!-- SweetAlert2 -->
