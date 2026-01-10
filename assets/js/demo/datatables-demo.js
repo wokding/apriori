@@ -6,8 +6,15 @@ $(document).ready(function() {
       "pageLength": 10,
       "ordering": true,
       "info": true,
-      "responsive": true,
+      "responsive": {
+        details: {
+          type: 'column',
+          target: 'tr'
+        }
+      },
       "destroy": true,
+      "autoWidth": false,
+      "scrollX": true,
       "language": {
         "search": "<i class='fas fa-search mr-2'></i>Search:",
         "lengthMenu": "Show _MENU_ entries per page",
@@ -35,6 +42,8 @@ $(document).ready(function() {
         // Add custom styling after initialization
         $('.dataTables_filter input').addClass('form-control form-control-sm').attr('placeholder', 'Type to search...');
         $('.dataTables_length select').addClass('form-control form-control-sm');
+        // Ensure responsive layout recalculates when inside tabs/modals
+        this.api().columns.adjust().responsive.recalc();
       }
     });
   }

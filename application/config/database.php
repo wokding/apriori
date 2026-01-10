@@ -85,11 +85,12 @@ $is_production = (
 
 if ($is_production) {
     // Production database config (InfinityFree)
+    // Check cPanel MySQL Databases for exact hostname (could be sql100, sql305, etc)
     $db['default'] = array(
         'dsn'	=> '',
-        'hostname' => 'sql100.infinityfree.com', // Verify in your hosting cPanel
+        'hostname' => 'sql100.infinityfree.com', // VERIFY in cPanel: MySQL Databases
         'username' => 'if0_40833436',
-        'password' => 'Adenaufal12345', // ADD YOUR DATABASE PASSWORD HERE
+        'password' => 'Adenaufal12345', // VERIFY your actual DB password
         'database' => 'if0_40833436_sia',
         'dbdriver' => 'mysqli',
         'port' => 3306,

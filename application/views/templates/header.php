@@ -48,6 +48,7 @@
     
     <!-- DataTables -->
     <link href="<?= base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css" onerror="this.remove()">
     
     <!-- Custom Enhanced Styles -->
     <link href="<?= base_url('assets/'); ?>css/custom-style.css" rel="stylesheet">

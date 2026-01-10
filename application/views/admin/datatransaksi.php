@@ -24,7 +24,7 @@
                         </div>
                     <?php endif; ?>
                     
-                    <div class="mb-3">
+                    <div class="mb-3 action-toolbar">
                         <a href="" class="btn btn-primary shadow-sm" data-toggle="modal" data-target="#newDataTransaksiModal">
                             <i class="fas fa-plus fa-sm mr-2"></i>Add New Transaction
                         </a>
@@ -64,7 +64,7 @@
                                         <td class="text-right font-weight-bold text-success">
                                             Rp <?= number_format($dt['total'], 0, ',', '.'); ?>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center table-actions">
                                             <a href="javascript:void(0);" class="btn btn-success btn-sm mr-1 mb-1 no-loading" title="Edit" onclick="confirmEditTransaction(<?= $dt['id']; ?>, '<?= htmlspecialchars($dt['id_transaksi'], ENT_QUOTES); ?>')">
                                                 <i class="fas fa-edit"></i>
                                             </a>

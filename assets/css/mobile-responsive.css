@@ -148,7 +148,8 @@ button, .btn {
     .btn {
         padding: 0.65rem 1.25rem;
         font-size: 0.9rem;
-        width: 100%;
+        width: auto;
+        min-width: var(--touch-target-size);
         margin-bottom: 0.5rem;
     }
     
@@ -334,6 +335,29 @@ button, .btn {
     
     .auth-title {
         font-size: 1.5rem;
+    }
+}
+
+/* Responsive action toolbar */
+.action-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.action-toolbar .btn {
+    margin: 0;
+}
+
+@media (max-width: 575.98px) {
+    .action-toolbar .btn {
+        flex: 1 1 100%;
+    }
+}
+
+@media (min-width: 576px) {
+    .action-toolbar .btn {
+        flex: 0 0 auto;
     }
 }
 
@@ -678,6 +702,9 @@ button, .btn {
     .table-mobile-card td {
         display: flex;
         justify-content: space-between;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.35rem;
         padding: 0.75rem 1rem;
         border: none;
         border-bottom: 1px solid #e3e6f0;
@@ -696,6 +723,19 @@ button, .btn {
     
     .table-mobile-card td:empty {
         display: none;
+    }
+
+    .table-mobile-card td.mobile-actions {
+        align-items: stretch;
+    }
+
+    .table-mobile-card td.mobile-actions .btn {
+        width: 100%;
+        margin: 0 0 0.35rem 0 !important;
+    }
+
+    .table-mobile-card td.mobile-actions .btn:last-child {
+        margin-bottom: 0 !important;
     }
 }
 

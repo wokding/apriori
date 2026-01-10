@@ -83,6 +83,11 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Skip root URL to avoid redirect issues
+    if (url.pathname === '/' || url.pathname === '') {
+        return;
+    }
+
     // Skip requests that are not for navigation or document
     if (request.destination !== 'document' && request.destination !== 'empty') {
         return;
@@ -127,7 +132,7 @@ async function cacheFirst(request) {
 // Network First Strategy
 async function networkFirst(request) {
     try {
-        const networkResponse = await fetch(request);
+        const networkResponse = await fetch(request, { redirect: 'follow' });
         if (networkResponse.ok) {
             const cache = await caches.open(RUNTIME_CACHE);
             cache.put(request, networkResponse.clone());

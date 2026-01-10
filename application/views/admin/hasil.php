@@ -52,7 +52,7 @@
                                         <td class="text-center">
                                             <span class="badge badge-info"><?php echo $hasil->min_confidence ?>%</span>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center table-actions">
                                             <?php $display_id = !empty($hasil->process_id) ? $hasil->process_id : 'DM-' . str_pad($hasil->id, 3, '0', STR_PAD_LEFT); ?>
                                             <a href="javascript:void(0);" class="btn btn-info btn-sm mr-1 mb-1 no-loading" title="View Details" onclick="confirmViewDetails('<?php echo $display_id ?>')">
                                                 <i class="fas fa-eye"></i>

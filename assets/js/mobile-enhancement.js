@@ -154,9 +154,15 @@
 
     // ==================== RESPONSIVE TABLE ENHANCEMENT ====================
     function makeTablesResponsive() {
-        const tables = document.querySelectorAll('table:not(.table-mobile-card)');
+        const tables = document.querySelectorAll('table');
         
         tables.forEach((table) => {
+            // Let DataTables responsive handle its own tables
+            if (table.classList.contains('dataTable')) {
+                table.classList.remove('table-mobile-card');
+                return;
+            }
+
             if (window.innerWidth < 768) {
                 // Add data-label to each cell for mobile card view
                 const headers = table.querySelectorAll('thead th');
@@ -169,6 +175,12 @@
                             cell.setAttribute('data-label', headers[index].textContent);
                         }
                     });
+
+                    // Mark the last cell as actions for styling
+                    const lastCell = cells[cells.length - 1];
+                    if (lastCell) {
+                        lastCell.classList.add('mobile-actions');
+                    }
                 });
                 
                 table.classList.add('table-mobile-card');
