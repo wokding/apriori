@@ -236,8 +236,12 @@
                         $('#globalLoadingOverlay').fadeIn(200);
                     }
                     
-                    // Redirect to delete URL
-                    window.location.href = href;
+                    // Redirect to delete URL (preserve InfinityFree tracking param)
+                    var redirectUrl = href;
+                    if (typeof window.InfinityFreeHelper !== 'undefined') {
+                        redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(href);
+                    }
+                    window.location.href = redirectUrl;
                 }, 200);
             }
         });

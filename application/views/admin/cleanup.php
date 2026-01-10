@@ -274,8 +274,12 @@ window.confirmDeleteProcess = function(processId, processName) {
                 document.getElementById('globalLoadingOverlay').style.display = 'flex';
             }
             
-            // Redirect to delete URL
-            window.location.href = '<?= base_url('admin/deleteProcess/'); ?>' + processId;
+            // Redirect to delete URL (preserve InfinityFree tracking param)
+            var redirectUrl = '<?= base_url('admin/deleteProcess/'); ?>' + processId;
+            if (typeof window.InfinityFreeHelper !== 'undefined') {
+                redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+            }
+            window.location.href = redirectUrl;
         }
     });
 };

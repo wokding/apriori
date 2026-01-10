@@ -358,7 +358,11 @@
 
                             // Redirect after a delay to ensure loading shows
                             setTimeout(function() {
-                                window.location.href = '<?php echo site_url('admin/deleteDataTransaksi/'); ?>' + transactionId;
+                                var redirectUrl = '<?php echo site_url('admin/deleteDataTransaksi/'); ?>' + transactionId;
+                                if (typeof window.InfinityFreeHelper !== 'undefined') {
+                                    redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+                                }
+                                window.location.href = redirectUrl;
                             }, 500);
                         }
                     });
@@ -390,7 +394,11 @@
 
                             // Redirect after a delay to ensure loading shows
                             setTimeout(function() {
-                                window.location.href = '<?php echo site_url('admin/deleteAllDataTransaksi'); ?>';
+                                var redirectUrl = '<?php echo site_url('admin/deleteAllDataTransaksi'); ?>';
+                                if (typeof window.InfinityFreeHelper !== 'undefined') {
+                                    redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+                                }
+                                window.location.href = redirectUrl;
                             }, 500);
                         }
                     });

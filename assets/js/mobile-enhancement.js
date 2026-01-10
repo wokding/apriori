@@ -7,6 +7,92 @@
 (function() {
     'use strict';
 
+    // ==================== INFINITYFREE TRACKING PARAMETER HANDLER ====================
+    // InfinityFree hosting adds ?i=X parameter on mobile browsers as a cookie bypass
+    // This helper ensures the parameter is preserved across navigation
+    const InfinityFreeHelper = {
+        // Get the tracking parameter from current URL
+        getTrackingParam: function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('i');
+        },
+
+        // Add tracking parameter to a URL if it exists in current URL
+        preserveTrackingParam: function(url) {
+            const trackingParam = this.getTrackingParam();
+            if (!trackingParam) return url;
+
+            try {
+                const urlObj = new URL(url, window.location.origin);
+                // Only add if URL is same origin and doesn't already have the param
+                if (urlObj.origin === window.location.origin && !urlObj.searchParams.has('i')) {
+                    urlObj.searchParams.set('i', trackingParam);
+                    return urlObj.toString();
+                }
+            } catch (e) {
+                // If URL parsing fails, try string manipulation
+                if (url.indexOf('http') !== 0 || url.indexOf(window.location.host) !== -1) {
+                    const separator = url.indexOf('?') !== -1 ? '&' : '?';
+                    if (url.indexOf('i=') === -1) {
+                        return url + separator + 'i=' + trackingParam;
+                    }
+                }
+            }
+            return url;
+        },
+
+        // Initialize: update all links on page to preserve tracking param
+        init: function() {
+            const trackingParam = this.getTrackingParam();
+            if (!trackingParam) return;
+
+            // Update all internal links
+            document.querySelectorAll('a[href]').forEach(function(link) {
+                const href = link.getAttribute('href');
+                if (!href) return;
+
+                // Skip external links, anchors, javascript, and links that already have ?i=
+                if (href.indexOf('#') === 0 ||
+                    href.indexOf('javascript:') === 0 ||
+                    href.indexOf('mailto:') === 0 ||
+                    href.indexOf('tel:') === 0 ||
+                    href.indexOf('i=') !== -1) {
+                    return;
+                }
+
+                // Skip external domains
+                if (href.indexOf('http') === 0 && href.indexOf(window.location.host) === -1) {
+                    return;
+                }
+
+                link.setAttribute('href', InfinityFreeHelper.preserveTrackingParam(href));
+            });
+
+            // Update form actions
+            document.querySelectorAll('form[action]').forEach(function(form) {
+                const action = form.getAttribute('action');
+                if (!action || action.indexOf('i=') !== -1) return;
+
+                // Skip external domains
+                if (action.indexOf('http') === 0 && action.indexOf(window.location.host) === -1) {
+                    return;
+                }
+
+                form.setAttribute('action', InfinityFreeHelper.preserveTrackingParam(action));
+            });
+
+            console.log('[InfinityFree Helper] Tracking parameter preserved: i=' + trackingParam);
+        }
+    };
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+        InfinityFreeHelper.init();
+    });
+
+    // Make helper available globally for dynamic content
+    window.InfinityFreeHelper = InfinityFreeHelper;
+
     // ==================== MOBILE DETECTION ====================
     const isMobile = {
         Android: function() {

@@ -352,7 +352,14 @@
             if (window.history.length > 1) {
                 window.history.back();
             } else {
-                window.location.href = '/';
+                // Preserve InfinityFree tracking parameter
+                var redirectUrl = '/';
+                var urlParams = new URLSearchParams(window.location.search);
+                var trackingParam = urlParams.get('i');
+                if (trackingParam) {
+                    redirectUrl = '/?i=' + trackingParam;
+                }
+                window.location.href = redirectUrl;
             }
         }
 

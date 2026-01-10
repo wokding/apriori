@@ -192,7 +192,11 @@
 
                             // Redirect after a delay to ensure loading shows
                             setTimeout(function() {
-                                window.location.href = '<?php echo site_url('admin/viewRule/'); ?>' + resultId;
+                                var redirectUrl = '<?php echo site_url('admin/viewRule/'); ?>' + resultId;
+                                if (typeof window.InfinityFreeHelper !== 'undefined') {
+                                    redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+                                }
+                                window.location.href = redirectUrl;
                             }, 500);
                         }
                     });
@@ -264,7 +268,11 @@
 
                             // Redirect after a delay to ensure loading shows
                             setTimeout(function() {
-                                window.location.href = '<?php echo site_url('admin/hapusRule/'); ?>' + resultId;
+                                var redirectUrl = '<?php echo site_url('admin/hapusRule/'); ?>' + resultId;
+                                if (typeof window.InfinityFreeHelper !== 'undefined') {
+                                    redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+                                }
+                                window.location.href = redirectUrl;
                             }, 500);
                         }
                     });

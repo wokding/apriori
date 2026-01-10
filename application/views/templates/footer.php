@@ -140,7 +140,11 @@
                 },
                 success: function() {
                     setTimeout(function() {
-                        document.location.href = "<?= base_url('admin/roleAccess/'); ?>" + roleId;
+                        var redirectUrl = "<?= base_url('admin/roleAccess/'); ?>" + roleId;
+                        if (typeof window.InfinityFreeHelper !== 'undefined') {
+                            redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+                        }
+                        document.location.href = redirectUrl;
                     }, 500);
                 },
                 error: function(xhr, status, error) {

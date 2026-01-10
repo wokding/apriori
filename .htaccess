@@ -3,12 +3,14 @@ RewriteEngine On
 RewriteBase /
 
 # If requesting root "/", route to index.php explicitly
-RewriteRule ^$ index.php [L]
+# QSA flag preserves query string (important for InfinityFree ?i=X tracking on mobile)
+RewriteRule ^$ index.php [QSA,L]
 
 # Otherwise route non-file/non-dir requests to index.php/<request>
+# QSA flag preserves query string parameters (e.g., ?i=1 from InfinityFree hosting)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]
+RewriteRule ^(.*)$ index.php/$1 [QSA,L]
 
 # Hosting environments may disallow php_flag/php_value in .htaccess
 # Configure PHP limits via hosting control panel instead

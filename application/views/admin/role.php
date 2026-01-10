@@ -296,7 +296,11 @@
 
                             // Redirect after a delay to ensure loading shows
                             setTimeout(function() {
-                                window.location.href = '<?= base_url('admin/roleaccess/'); ?>' + id;
+                                var redirectUrl = '<?= base_url('admin/roleaccess/'); ?>' + id;
+                                if (typeof window.InfinityFreeHelper !== 'undefined') {
+                                    redirectUrl = window.InfinityFreeHelper.preserveTrackingParam(redirectUrl);
+                                }
+                                window.location.href = redirectUrl;
                             }, 500);
                         }
                     });

@@ -4,8 +4,8 @@
  * Provides offline capability and caching
  */
 
-const CACHE_NAME = 'apriori-kf-v1.0.0';
-const RUNTIME_CACHE = 'apriori-runtime-v1.0.0';
+const CACHE_NAME = 'apriori-kf-v1.0.1';
+const RUNTIME_CACHE = 'apriori-runtime-v1.0.1';
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
@@ -63,6 +63,26 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+// Helper function to normalize URL by removing InfinityFree tracking parameters (?i=X)
+function normalizeUrl(url) {
+    const normalized = new URL(url);
+    // Remove InfinityFree tracking parameter (used on mobile browsers as cookie bypass)
+    normalized.searchParams.delete('i');
+    return normalized;
+}
+
+// Helper function to create a normalized request for cache matching
+function createNormalizedRequest(request) {
+    const normalizedUrl = normalizeUrl(request.url);
+    return new Request(normalizedUrl.toString(), {
+        method: request.method,
+        headers: request.headers,
+        mode: request.mode,
+        credentials: request.credentials,
+        redirect: request.redirect
+    });
+}
+
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
     const { request } = event;
@@ -75,6 +95,20 @@ self.addEventListener('fetch', (event) => {
 
     // Skip POST, PUT, DELETE requests
     if (request.method !== 'GET') {
+        return;
+    }
+
+    // Skip requests with InfinityFree tracking parameter for dynamic pages
+    // This ensures the ?i=X parameter is preserved for session tracking on mobile
+    if (url.searchParams.has('i') && (
+        url.pathname.includes('/auth') || 
+        url.pathname.includes('/admin') ||
+        url.pathname.includes('/user') ||
+        url.pathname === '/' ||
+        url.pathname === ''
+    )) {
+        // Let these requests pass through to the network directly
+        // Don't cache or intercept - InfinityFree needs the ?i parameter for session
         return;
     }
 
