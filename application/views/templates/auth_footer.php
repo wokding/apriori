@@ -9,7 +9,7 @@
 <script src="<?= base_url('assets/'); ?>js/sb-admin-2.min.js"></script>
 
 <!-- Toastr for Toast Notifications -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" onerror="console.warn('Toastr failed to load')"></script>
 
 <!-- Custom Enhanced Scripts -->
 <script src="<?= base_url('assets/'); ?>js/custom-enhanced.js"></script>

@@ -49,6 +49,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'auth';
+
+// Auto-detect environment and set default controller accordingly
+$hostHeader = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+$is_production = (
+    $hostHeader && (
+        stripos($hostHeader, 'infinityfree.com') !== false ||
+        stripos($hostHeader, 'epizy.com') !== false ||
+        stripos($hostHeader, 'siapriori') !== false
+    )
+);
+
+// Set default controller based on environment
+// Local: dashboard (admin); Production: login (auth)
+if ($is_production) {
+    $route['default_controller'] = 'auth';
+} else {
+    // Local dev - can choose to default to dashboard or auth
+    // Change to 'admin' if you want to land on dashboard on local
+    $route['default_controller'] = 'auth';
+}
+
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

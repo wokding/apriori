@@ -54,13 +54,13 @@
                                         </td>
                                         <td class="text-center">
                                             <?php $display_id = !empty($hasil->process_id) ? $hasil->process_id : 'DM-' . str_pad($hasil->id, 3, '0', STR_PAD_LEFT); ?>
-                                            <a href="javascript:void(0);" class="btn btn-info btn-sm no-loading" title="View Details" onclick="confirmViewDetails('<?php echo $display_id ?>')">
+                                            <a href="javascript:void(0);" class="btn btn-info btn-sm mr-1 mb-1 no-loading" title="View Details" onclick="confirmViewDetails('<?php echo $display_id ?>')">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="javascript:void(0);" class="btn btn-warning btn-sm mb-1 no-loading" title="Export PDF" onclick="confirmExportPDF('<?php echo $display_id ?>')">
+                                            <a href="javascript:void(0);" class="btn btn-warning btn-sm mr-1 mb-1 no-loading" title="Export PDF" onclick="confirmExportPDF('<?php echo $display_id ?>')">
                                                 <i class="fas fa-file-pdf"></i>
                                             </a>
-                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm no-loading" title="Delete" onclick="confirmDeleteResult('<?php echo $display_id ?>')">
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm mb-1 no-loading" title="Delete" onclick="confirmDeleteResult('<?php echo $display_id ?>')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </td>
@@ -126,10 +126,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                    <i class="fas fa-times mr-1"></i>Cancel
+                                    <i class="fas fa-times mr-2"></i>Cancel
                                 </button>
                                 <button type="button" class="btn btn-info" id="confirmViewDetailsBtn">
-                                    <i class="fas fa-eye mr-1"></i>Yes, View Details
+                                    <i class="fas fa-eye mr-2"></i>Yes, View Details
                                 </button>
                             </div>
                         </div>
@@ -154,10 +154,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                    <i class="fas fa-times mr-1"></i>Cancel
+                                    <i class="fas fa-times mr-2"></i>Cancel
                                 </button>
                                 <button type="button" class="btn btn-warning" id="confirmExportPDFBtn">
-                                    <i class="fas fa-file-pdf mr-1"></i>Yes, Export PDF
+                                    <i class="fas fa-file-pdf mr-2"></i>Yes, Export PDF
                                 </button>
                             </div>
                         </div>

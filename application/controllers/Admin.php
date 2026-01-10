@@ -99,8 +99,11 @@ class Admin extends CI_Controller
         redirect('admin/role');
     }
 
-    public function deleteRole($id)
+    public function deleteRole()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->db->where('id', $id);
         $this->db->delete('user_role');
         
@@ -128,8 +131,11 @@ class Admin extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    public function toggleUserStatus($id)
+    public function toggleUserStatus()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $user = $this->db->get_where('user', ['id' => $id])->row_array();
         
         if ($user) {
@@ -145,8 +151,11 @@ class Admin extends CI_Controller
         redirect('admin/users');
     }
 
-    public function deleteUser($id)
+    public function deleteUser()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->db->where('id', $id);
         $this->db->delete('user');
         
@@ -168,8 +177,11 @@ class Admin extends CI_Controller
         redirect('admin/users');
     }
 
-    public function roleAccess($role_id)
+    public function roleAccess()
     {
+        $role_id = $this->uri->segment(3);
+        if (!$role_id) show_404();
+        
         $data['title'] = 'Role Access';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
@@ -238,16 +250,22 @@ class Admin extends CI_Controller
         }
     }
 
-    public function editDataTransaksi($id)
+    public function editDataTransaksi()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->admin->updateDataTransaksi($id);
         $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Transaction has been updated successfully!');
         redirect('admin/datatransaksi');
     }
 
-    public function deleteDataTransaksi($id)
+    public function deleteDataTransaksi()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->admin->deleteDataTransaksi($id);
         $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Transaction has been deleted successfully!');
@@ -396,7 +414,7 @@ class Admin extends CI_Controller
     }
 
 
-    public function hapusRule($id)
+    public function hapusRule()
     {
         $process_id = $this->uri->segment(3);
         
@@ -413,7 +431,7 @@ class Admin extends CI_Controller
         }
     }
 
-    public function viewRule($id)
+    public function viewRule()
     {
         $process_id = $this->uri->segment(3);
         
@@ -421,13 +439,31 @@ class Admin extends CI_Controller
         $id = $this->admin->getIdFromProcessId($process_id);
         if (!$id) show_404();
 
-        $data["ConfidenceItemset3"] = $this->admin->confidenceItemset3($id);
-        $data["ConfidenceItemset2"] = $this->admin->confidenceItemset2($id);
+        // Increase memory limit for viewing results
+        ini_set('memory_limit', '2048M');
+        set_time_limit(300);
+
+        // Get rule counts
+        $total_rules_3 = $this->admin->countConfidenceRules($id, 3);
+        $total_rules_2 = $this->admin->countConfidenceRules($id, 2);
+        
+        // Limit to 500 rules per itemset for display (prevents memory exhaustion)
+        $display_limit = 500;
+        $itemset_limit = 500;
+        
+        $data["ConfidenceItemset3"] = $this->admin->confidenceItemset3($id, $display_limit);
+        $data["ConfidenceItemset2"] = $this->admin->confidenceItemset2($id, $display_limit);
         $data["RuleID"] = $this->admin->getRuleID($id);
         $data["ItemSet1"] = $this->admin->getItemset1($id);
-        $data["ItemSet2"] = $this->admin->getItemset2($id);
-        $data["ItemSet3"] = $this->admin->getItemset3($id);
-
+        $data["ItemSet2"] = $this->admin->getItemset2($id, $itemset_limit);
+        $data["ItemSet3"] = $this->admin->getItemset3($id, $itemset_limit);
+        
+        // Pass rule counts and limit info to view
+        $data["total_rules_3"] = $total_rules_3;
+        $data["total_rules_2"] = $total_rules_2;
+        $data["display_limit"] = $display_limit;
+        $data["show_warning_3"] = $total_rules_3 > $display_limit;
+        $data["show_warning_2"] = $total_rules_2 > $display_limit;
 
         $data['title'] = 'Hasil - View Rule';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
@@ -440,7 +476,7 @@ class Admin extends CI_Controller
     }
 
 
-    public function viewRulePDF($id)
+    public function viewRulePDF()
     {
         // Enable error reporting untuk debugging
         error_reporting(E_ALL);

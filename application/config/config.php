@@ -23,7 +23,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost:8000/';
+// Auto-detect base URL for local vs hosting
+// Local dev: fallback to localhost:8000; Production: use current host
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
+	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+	$config['base_url'] = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/';
+} else {
+	$config['base_url'] = 'http://localhost:8000/';
+}
 
 /*
 |--------------------------------------------------------------------------

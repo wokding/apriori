@@ -62,10 +62,10 @@
                         <hr>
 
                         <div class="form-group mb-0">
-                            <button type="submit" class="btn btn-primary btn-lg" id="btnSubmit">
+                            <button type="submit" class="btn btn-primary btn-block" id="btnSubmit" style="padding: 0.75rem;">
                                 <i class="fas fa-cogs mr-2"></i>Process Data
                             </button>
-                            <a href="<?= base_url('admin/hasil'); ?>" class="btn btn-secondary btn-lg">
+                            <a href="<?= base_url('admin/hasil'); ?>" class="btn btn-secondary btn-block mt-2" style="padding: 0.75rem;">
                                 <i class="fas fa-chart-bar mr-2"></i>View Results
                             </a>
                         </div>
@@ -74,7 +74,7 @@
             </div>
         </div>
         
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card shadow mb-4 border-left-info">
                 <div class="card-header bg-info text-white">
                     <h6 class="m-0 font-weight-bold">

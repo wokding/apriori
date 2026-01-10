@@ -100,16 +100,22 @@ class Menu extends CI_Controller
         }
     }
 
-    public function editMenu($id)
+    public function editMenu()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->db->update('user_menu', ['menu' => $this->input->post('menu')], ['id' => $id]);
         $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Menu has been updated successfully!');
         redirect('menu');
     }
 
-    public function deleteMenu($id)
+    public function deleteMenu()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->db->delete('user_menu', ['id' => $id]);
         $this->db->delete('user_sub_menu', ['menu_id' => $id]);
         $this->_clear_flashdata();
@@ -117,8 +123,11 @@ class Menu extends CI_Controller
         redirect('menu');
     }
 
-    public function editSubMenu($id)
+    public function editSubMenu()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->menu->saveSubMenu($id);
 
         $this->_clear_flashdata();
@@ -126,8 +135,11 @@ class Menu extends CI_Controller
         redirect('menu/submenu');
     }
 
-    public function deleteSubMenu($id)
+    public function deleteSubMenu()
     {
+        $id = $this->uri->segment(3);
+        if (!$id) show_404();
+        
         $this->menu->deleteSubMenu($id);
         $this->_clear_flashdata();
         $this->session->set_flashdata('success', 'Submenu has been deleted successfully!');

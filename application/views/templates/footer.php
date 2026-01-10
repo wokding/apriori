@@ -81,10 +81,10 @@
 <script src="<?= base_url('assets/'); ?>js/sb-admin-2.min.js"></script>
 
 <!-- Toastr for Toast Notifications -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" onerror="console.warn('Toastr failed to load')"></script>
 
 <!-- SweetAlert2 for Modal Confirmations -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" onerror="console.warn('SweetAlert2 failed to load')"></script>
 
 <!-- Custom Enhanced Scripts -->
 <script src="<?= base_url('assets/'); ?>js/custom-enhanced.js"></script>
@@ -103,10 +103,10 @@
 <script src="<?= base_url('assets/'); ?>js/demo/datatables-demo.js"></script>
 
 <!-- Date Picker Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"></script>
-<script src="<?= base_url('assets/'); ?>daterange/daterange.js"></script>
-<script src="<?= base_url('assets/'); ?>bootstrap-datepicker-1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" onerror="console.warn('Moment.js failed to load')"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" onerror="console.warn('DateRangePicker failed to load')"></script>
+<script src="<?= base_url('assets/'); ?>daterange/daterange.js" onerror="console.warn('Custom daterange.js failed to load')"></script>
+<script src="<?= base_url('assets/'); ?>bootstrap-datepicker-1.9.0/dist/js/bootstrap-datepicker.min.js" onerror="console.warn('Bootstrap Datepicker failed to load')"></script>
 
 <script>
     $(document).ready(function() {
@@ -205,6 +205,16 @@
                 $('#globalLoadingOverlay').fadeOut(200);
             }
         });
+
+        // Handle external resource loading errors gracefully
+        window.addEventListener('error', function(event) {
+            // Check if error is related to resource loading (CSS, JS, etc)
+            if (event.filename && !event.filename.includes('localhost')) {
+                // Suppress console errors for external resources
+                console.warn('External resource failed to load:', event.filename);
+                event.preventDefault();
+            }
+        }, true);
     });
 </script>
 

@@ -127,20 +127,20 @@ class Admin_model extends CI_Model
     }
 
     // Confidence ItemSet 3
-    public function confidenceItemset3($id)
+    public function confidenceItemset3($id, $limit = 1000)
     {
         $sql = "SELECT conf.*, log.start_date, log.end_date FROM confidence conf 
                 INNER JOIN process_log log ON conf.id_process = log.id 
-                WHERE conf.id_process = '$id' AND conf.from_itemset = 3";
+                WHERE conf.id_process = '$id' AND conf.from_itemset = 3 LIMIT " . intval($limit);
         return $this->db->query($sql)->result();
     }
 
     // Confidence ItemSet 2
-    public function confidenceItemset2($id)
+    public function confidenceItemset2($id, $limit = 1000)
     {
         $sql = "SELECT conf.*, log.start_date, log.end_date FROM confidence conf 
                 INNER JOIN process_log log ON conf.id_process = log.id 
-                WHERE conf.id_process = '$id' AND conf.from_itemset = 2";
+                WHERE conf.id_process = '$id' AND conf.from_itemset = 2 LIMIT " . intval($limit);
         return $this->db->query($sql)->result();
     }
 
@@ -151,6 +151,17 @@ class Admin_model extends CI_Model
         return $this->db->query($sql)->row();
     }
 
+    // Count total confidence rules
+    public function countConfidenceRules($id, $from_itemset = null)
+    {
+        if ($from_itemset) {
+            $sql = "SELECT COUNT(*) as total FROM confidence WHERE id_process = '$id' AND from_itemset = " . intval($from_itemset);
+        } else {
+            $sql = "SELECT COUNT(*) as total FROM confidence WHERE id_process = '$id'";
+        }
+        return $this->db->query($sql)->row()->total;
+    }
+
     // Get Itemset 1
     public function getItemset1($id)
     {
@@ -159,16 +170,16 @@ class Admin_model extends CI_Model
     }
 
     // Get Itemset 2
-    public function getItemset2($id)
+    public function getItemset2($id, $limit = 500)
     {
-        $sql = "SELECT * FROM itemset2 WHERE id_process = '$id' " . " ORDER BY lolos DESC";
+        $sql = "SELECT * FROM itemset2 WHERE id_process = '$id' " . " ORDER BY lolos DESC LIMIT " . intval($limit);
         return $this->db->query($sql)->result();
     }
 
     // Get Itemset 3
-    public function getItemset3($id)
+    public function getItemset3($id, $limit = 500)
     {
-        $sql = "SELECT * FROM itemset3 WHERE id_process = '$id' " . " ORDER BY lolos DESC";
+        $sql = "SELECT * FROM itemset3 WHERE id_process = '$id' " . " ORDER BY lolos DESC LIMIT " . intval($limit);
         return $this->db->query($sql)->result();
     }
 

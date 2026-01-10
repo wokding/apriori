@@ -33,7 +33,7 @@
                     ->result_array();
                 $notif_count = $CI->db->where('is_active', 0)->from('user')->count_all_results();
             } else {
-                // Untuk member: tampilkan pesan aktif, badge 1x lalu hilang setelah dibuka (via JS/localStorage)
+                // Untuk member: tampilkan pesan aktif dengan badge yang selalu muncul
                 $notif_items = [
                     [
                         'title' => 'Akun aktif',
@@ -41,7 +41,8 @@
                         'date_created' => time()
                     ]
                 ];
-                $notif_count = 1; // badge muncul, di-hide oleh JS setelah dibuka
+                // Badge selalu muncul untuk member
+                $notif_count = 1;
             }
             ?>
 
@@ -53,7 +54,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-bell fa-fw"></i>
                         <?php if ($notif_count > 0) : ?>
-                            <span class="badge badge-danger badge-counter" id="notifBadge" data-role="<?= $is_admin ? 'admin' : 'member'; ?>"><?= $notif_count > 9 ? '9+' : $notif_count; ?></span>
+                            <span class="badge badge-danger badge-counter" id="notifBadge" data-role="<?= $is_admin ? 'admin' : 'member'; ?>" style="display: inline-block !important;"><?= $notif_count > 9 ? '9+' : $notif_count; ?></span>
                         <?php endif; ?>
                     </a>
                     <!-- Dropdown - Alerts -->
@@ -135,25 +136,38 @@
                 var badge = document.getElementById('notifBadge');
                 if (!badge) return;
 
-                // Only apply auto-hide for member
+                // FORCE badge to be visible - override any CSS or previous state
+                badge.style.setProperty('display', 'inline-block', 'important');
+                badge.style.setProperty('visibility', 'visible', 'important');
+                badge.style.setProperty('opacity', '1', 'important');
+
+                console.log('Badge element found:', badge);
+                console.log('Badge role:', badge.dataset.role);
+
+                // Only apply auto-hide logic for member after dropdown is clicked
                 if (badge.dataset.role === 'member') {
                     var seenKey = 'notif_member_seen';
-                    var hideBadge = function() { badge.classList.add('d-none'); };
-
-                    // Hide if already seen in this browser
-                    if (localStorage.getItem(seenKey)) {
-                        hideBadge();
+                    
+                    // Check if already clicked/seen before
+                    var alreadySeen = localStorage.getItem(seenKey);
+                    
+                    // If already seen in a previous session, hide the badge
+                    if (alreadySeen) {
+                        badge.style.display = 'none';
                     }
 
                     // When dropdown opened/clicked, mark as seen and hide badge
                     var dropdown = document.getElementById('alertsDropdown');
                     if (dropdown) {
                         var markSeen = function() {
+                            console.log('Dropdown opened, hiding badge');
                             localStorage.setItem(seenKey, '1');
-                            hideBadge();
+                            badge.style.display = 'none';
                         };
+                        
                         dropdown.addEventListener('click', markSeen);
-                        // For Bootstrap event (if available)
+                        
+                        // For Bootstrap dropdown event
                         if (typeof jQuery !== 'undefined' && typeof $.fn.dropdown !== 'undefined') {
                             $(dropdown).on('show.bs.dropdown', markSeen);
                         }

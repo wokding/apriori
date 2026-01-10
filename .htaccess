@@ -1,8 +1,14 @@
+DirectoryIndex index.php
 RewriteEngine On
+RewriteBase /
+
+# If requesting root "/", route to index.php explicitly
+RewriteRule ^$ index.php [L]
+
+# Otherwise route non-file/non-dir requests to index.php/<request>
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php/$1 [L]
 
-php_flag display_errors On
-php_value upload_max_filesize 1000M
-php_value post_max_size 1000M
+# Hosting environments may disallow php_flag/php_value in .htaccess
+# Configure PHP limits via hosting control panel instead

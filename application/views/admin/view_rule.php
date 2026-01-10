@@ -60,11 +60,20 @@
         <a href="javascript:void(0)" class="d-block card-header py-3 collapsed" data-toggle="collapse" data-target="#collapseConfidence3" role="button" aria-expanded="false" aria-controls="collapseConfidence3">
             <h6 class="m-0 font-weight-bold">
                 <i class="fas fa-percentage mr-2"></i>Confidence from Itemset 3
+                <?php if(isset($show_warning_3) && $show_warning_3): ?>
+                    <span class="badge badge-warning ml-2"><i class="fas fa-info-circle mr-1"></i>Showing 500 of <?php echo $total_rules_3; ?> rules</span>
+                <?php endif; ?>
                 <i class="fas fa-chevron-down float-right"></i>
             </h6>
         </a>
         <div class="collapse" id="collapseConfidence3">
         <div class="card-body">
+            <?php if(isset($show_warning_3) && $show_warning_3): ?>
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <strong>Note:</strong> Showing first 500 rules (out of <?php echo $total_rules_3; ?> total). This limit is applied to prevent memory exhaustion with low confidence thresholds.
+                </div>
+            <?php endif; ?>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered" style="width:100%">
                     <thead class="bg-primary text-white">
@@ -123,11 +132,20 @@
         <a href="javascript:void(0)" class="d-block card-header py-3 collapsed" data-toggle="collapse" data-target="#collapseConfidence2" role="button" aria-expanded="false" aria-controls="collapseConfidence2">
             <h6 class="m-0 font-weight-bold">
                 <i class="fas fa-percentage mr-2"></i>Confidence from Itemset 2
+                <?php if(isset($show_warning_2) && $show_warning_2): ?>
+                    <span class="badge badge-warning ml-2"><i class="fas fa-info-circle mr-1"></i>Showing 500 of <?php echo $total_rules_2; ?> rules</span>
+                <?php endif; ?>
                 <i class="fas fa-chevron-down float-right"></i>
             </h6>
         </a>
         <div class="collapse" id="collapseConfidence2">
         <div class="card-body">
+            <?php if(isset($show_warning_2) && $show_warning_2): ?>
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <strong>Note:</strong> Showing first 500 rules (out of <?php echo $total_rules_2; ?> total). This limit is applied to prevent memory exhaustion with low confidence thresholds.
+                </div>
+            <?php endif; ?>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered" style="width:100%">
                     <thead class="bg-primary text-white">

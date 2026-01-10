@@ -73,24 +73,61 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
-$db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'db_apriori',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+// Auto-detect environment (local vs production)
+$hostHeader = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+// Consider both InfinityFree and Epizy free-hosting domains
+$is_production = (
+    $hostHeader && (
+        stripos($hostHeader, 'infinityfree.com') !== false ||
+        stripos($hostHeader, 'epizy.com') !== false
+    )
 );
+
+if ($is_production) {
+    // Production database config (InfinityFree)
+    $db['default'] = array(
+        'dsn'	=> '',
+        'hostname' => 'sql100.infinityfree.com', // Verify in your hosting cPanel
+        'username' => 'if0_40833436',
+        'password' => 'Adenaufal12345', // ADD YOUR DATABASE PASSWORD HERE
+        'database' => 'if0_40833436_sia',
+        'dbdriver' => 'mysqli',
+        'port' => 3306,
+        'dbprefix' => '',
+        'pconnect' => FALSE,
+        'db_debug' => FALSE, // Disable debug in production
+        'cache_on' => FALSE,
+        'cachedir' => '',
+        'char_set' => 'utf8',
+        'dbcollat' => 'utf8_general_ci',
+        'swap_pre' => '',
+        'encrypt' => FALSE,
+        'compress' => FALSE,
+        'stricton' => FALSE,
+        'failover' => array(),
+        'save_queries' => FALSE // Disable to save memory
+    );
+} else {
+    // Local development database config
+    $db['default'] = array(
+        'dsn'	=> '',
+        'hostname' => 'localhost',
+        'username' => 'root',
+        'password' => '',
+        'database' => 'db_apriori',
+        'dbdriver' => 'mysqli',
+        'dbprefix' => '',
+        'pconnect' => FALSE,
+        'db_debug' => (ENVIRONMENT !== 'production'),
+        'cache_on' => FALSE,
+        'cachedir' => '',
+        'char_set' => 'utf8',
+        'dbcollat' => 'utf8_general_ci',
+        'swap_pre' => '',
+        'encrypt' => FALSE,
+        'compress' => FALSE,
+        'stricton' => FALSE,
+        'failover' => array(),
+        'save_queries' => TRUE
+    );
+}

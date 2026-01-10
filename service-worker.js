@@ -20,7 +20,6 @@ const PRECACHE_ASSETS = [
     '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js',
     '/assets/vendor/fontawesome-free/css/all.min.css',
     '/assets/img/kimiafarma.png',
-    '/assets/img/favicon.ico',
     '/offline.html'
 ];
 
@@ -32,7 +31,13 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME)
             .then((cache) => {
                 console.log('[Service Worker] Precaching assets');
-                return cache.addAll(PRECACHE_ASSETS);
+                // Use addAll with error handling to skip missing files
+                return cache.addAll(PRECACHE_ASSETS)
+                    .catch((error) => {
+                        console.warn('[Service Worker] Some assets failed to cache:', error);
+                        // Continue even if some assets fail to cache
+                        return Promise.resolve();
+                    });
             })
             .then(() => self.skipWaiting())
     );
