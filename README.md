@@ -169,9 +169,12 @@ php -S localhost:8000
 7. **Akses Aplikasi**
 ```
 URL: http://localhost:8000
-Default Login:
-- Email: admin@admin.com
+Login Administrator:
+- Email: administrator@gmail.com
 - Password: admin123
+Login Member:
+- Email: userdemo@gmail.com
+- Password: user123
 ```
 
 ## 📖 Dokumentasi
