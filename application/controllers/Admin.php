@@ -418,17 +418,34 @@ class Admin extends CI_Controller
     {
         $process_id = $this->uri->segment(3);
         
-        if (!isset($process_id)) show_404();
+        if (!isset($process_id) || empty($process_id)) {
+            $this->session->set_flashdata('error', 'Invalid Process ID');
+            redirect('admin/hasil');
+            return;
+        }
         
         // Convert process_id to id
         $id = $this->admin->getIdFromProcessId($process_id);
-        if (!$id) show_404();
         
-        if ($this->admin->deleteRule($id)) {
-            $this->_clear_flashdata();
-            $this->session->set_flashdata('success', 'Rule Berhasil dihapus');
-            redirect(site_url('admin/hasil'));
+        if (!$id) {
+            $this->session->set_flashdata('error', 'Result not found');
+            redirect('admin/hasil');
+            return;
         }
+        
+        // Delete rule
+        try {
+            if ($this->admin->deleteRule($id)) {
+                $this->_clear_flashdata();
+                $this->session->set_flashdata('success', 'Result successfully deleted');
+            } else {
+                $this->session->set_flashdata('error', 'Failed to delete result');
+            }
+        } catch (Exception $e) {
+            $this->session->set_flashdata('error', 'Error deleting result: ' . $e->getMessage());
+        }
+        
+        redirect('admin/hasil');
     }
 
     public function viewRule()

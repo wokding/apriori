@@ -158,12 +158,27 @@
 }
 </style>
 
+<!-- Script akan dijalankan setelah jQuery loaded dari footer -->
 <script>
-$(document).ready(function() {
-    // Form-specific handling if needed
-    $('#formApriori').on('submit', function() {
-        // Additional custom behavior can go here
-        return true;
+// Tunggu sampai window.onload untuk memastikan semua script loaded
+if (typeof jQuery !== 'undefined') {
+    jQuery(document).ready(function($) {
+        // Form-specific handling if needed
+        $('#formApriori').on('submit', function() {
+            // Additional custom behavior can go here
+            return true;
+        });
     });
-});
+} else {
+    // Fallback: tunggu sampai jQuery loaded
+    window.addEventListener('load', function() {
+        if (typeof jQuery !== 'undefined') {
+            jQuery(document).ready(function($) {
+                $('#formApriori').on('submit', function() {
+                    return true;
+                });
+            });
+        }
+    });
+}
 </script>

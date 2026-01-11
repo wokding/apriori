@@ -4,8 +4,8 @@
  * Provides offline capability and caching
  */
 
-const CACHE_NAME = 'apriori-kf-v1.0.1';
-const RUNTIME_CACHE = 'apriori-runtime-v1.0.1';
+const CACHE_NAME = 'apriori-kf-v1.0.2';
+const RUNTIME_CACHE = 'apriori-runtime-v1.0.2';
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
@@ -114,6 +114,11 @@ self.addEventListener('fetch', (event) => {
 
     // Skip logout requests to avoid redirect issues
     if (url.pathname.includes('/auth/logout')) {
+        return;
+    }
+
+    // Skip delete/hapus requests to avoid redirect issues
+    if (url.pathname.includes('/hapus') || url.pathname.includes('/delete')) {
         return;
     }
 

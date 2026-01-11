@@ -1,14 +1,30 @@
-// Gunakan 2 input date HTML5 untuk semua device
-var $input = $('.daterange');
-var $wrapper = $input.parent();
+// Tunggu sampai jQuery dan DOM siap
+(function() {
+  // Check if jQuery is loaded
+  if (typeof jQuery === 'undefined') {
+    console.error('jQuery is not loaded! Please load jQuery before daterange.js');
+    return;
+  }
 
-// Ambil nilai range yang ada
-var currentRange = $input.val().split(' - ');
-var startDate = currentRange[0] || moment().subtract(29, 'days').format('YYYY-MM-DD');
-var endDate = currentRange[1] || moment().format('YYYY-MM-DD');
+  // Wait for DOM ready
+  jQuery(document).ready(function($) {
+    // Gunakan 2 input date HTML5 untuk semua device
+    var $input = $('.daterange');
+    
+    // Exit if no daterange input found
+    if ($input.length === 0) {
+      return;
+    }
+    
+    var $wrapper = $input.parent();
 
-// Sembunyikan input asli
-$input.hide();
+    // Ambil nilai range yang ada
+    var currentRange = $input.val().split(' - ');
+    var startDate = currentRange[0] || moment().subtract(29, 'days').format('YYYY-MM-DD');
+    var endDate = currentRange[1] || moment().format('YYYY-MM-DD');
+
+    // Sembunyikan input asli
+    $input.hide();
 
 // Tambahkan 2 input date dengan wrapper untuk positioning icon
 $wrapper.append(`
@@ -68,3 +84,5 @@ $('.mobile-daterange button').on('click', function() {
   updateRange();
   $(this).addClass('active').siblings().removeClass('active');
 });
+  }); // End of document.ready
+})(); // End of IIFE
