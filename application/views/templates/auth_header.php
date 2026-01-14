@@ -8,8 +8,32 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="description" content="Authentication - Apriori Kimia Farma">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Login dan Registrasi Sistem Apriori Kimia Farma - Platform Data Mining untuk Analisis Penjualan Obat Bebas">
+    <meta name="keywords" content="login kimia farma, apriori login, sistem farmasi, data mining apotek">
     <meta name="author" content="Kimia Farma">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Indonesian">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="<?= current_url(); ?>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= current_url(); ?>">
+    <meta property="og:title" content="<?= $title; ?> | Apriori - Kimia Farma">
+    <meta property="og:description" content="Login dan Registrasi Sistem Apriori Kimia Farma">
+    <meta property="og:image" content="<?= base_url('assets/img/kimiafarma.png'); ?>">
+    <meta property="og:locale" content="id_ID">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= $title; ?> | Apriori - Kimia Farma">
+    <meta name="twitter:description" content="Login dan Registrasi Sistem Apriori Kimia Farma">
+    <meta name="twitter:image" content="<?= base_url('assets/img/kimiafarma.png'); ?>">
+    
+    <!-- PWA & Mobile -->
     <meta name="theme-color" content="#667eea">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">

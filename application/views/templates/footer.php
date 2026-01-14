@@ -17,6 +17,75 @@
 </div>
 <!-- End of Page Wrapper -->
 
+<!-- Schema.org Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Kimia Farma Apotek",
+  "alternateName": "Apriori - Kimia Farma",
+  "url": "<?= base_url(); ?>",
+  "logo": "<?= base_url('assets/img/kimiafarma.png'); ?>",
+  "description": "Implementasi Data Mining Penjualan Obat Bebas dengan Algoritma Apriori di Apotek Kimia Farma",
+  "foundingDate": "<?= date('Y'); ?>",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "ID",
+    "addressLocality": "Indonesia"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Customer Service",
+    "areaServed": "ID"
+  },
+  "sameAs": []
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Apriori - Kimia Farma",
+  "url": "<?= base_url(); ?>",
+  "description": "Sistem Data Mining Penjualan Obat Bebas dengan Algoritma Apriori untuk Apotek Kimia Farma",
+  "inLanguage": "id-ID",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Kimia Farma Apotek",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "<?= base_url('assets/img/kimiafarma.png'); ?>"
+    }
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Apriori - Kimia Farma",
+  "url": "<?= base_url(); ?>",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web Browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "IDR"
+  },
+  "description": "Platform Data Mining untuk analisis pola pembelian dan asosiasi produk farmasi menggunakan Algoritma Apriori",
+  "screenshot": "<?= base_url('assets/img/screenshots/dashboard.png'); ?>",
+  "featureList": [
+    "Data Mining dengan Algoritma Apriori",
+    "Analisis Market Basket",
+    "Association Rules Mining",
+    "Dashboard Analytics",
+    "Progressive Web App (PWA)"
+  ]
+}
+</script>
+
 <!-- Global Loading Overlay -->
 <div id="globalLoadingOverlay" class="global-loading-overlay" style="display: none;">
     <div class="loading-overlay-content">

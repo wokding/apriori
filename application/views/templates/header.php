@@ -8,8 +8,36 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="description" content="Data Mining Apriori - Kimia Farma">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Implementasi Data Mining Penjualan Obat Bebas dengan Algoritma Apriori di Apotek Kimia Farma. Analisis pola pembelian dan asosiasi produk farmasi untuk meningkatkan strategi penjualan.">
+    <meta name="keywords" content="apriori, data mining, kimia farma, apotek, algoritma apriori, penjualan obat, analisis data, market basket analysis, association rules, pola pembelian, farmasi">
     <meta name="author" content="Kimia Farma">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Indonesian">
+    <meta name="revisit-after" content="7 days">
+    <meta name="rating" content="general">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="<?= current_url(); ?>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= current_url(); ?>">
+    <meta property="og:title" content="<?= $title; ?> | Apriori - Kimia Farma">
+    <meta property="og:description" content="Implementasi Data Mining Penjualan Obat Bebas dengan Algoritma Apriori di Apotek Kimia Farma">
+    <meta property="og:image" content="<?= base_url('assets/img/kimiafarma.png'); ?>">
+    <meta property="og:site_name" content="Apriori - Kimia Farma">
+    <meta property="og:locale" content="id_ID">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<?= current_url(); ?>">
+    <meta name="twitter:title" content="<?= $title; ?> | Apriori - Kimia Farma">
+    <meta name="twitter:description" content="Implementasi Data Mining Penjualan Obat Bebas dengan Algoritma Apriori di Apotek Kimia Farma">
+    <meta name="twitter:image" content="<?= base_url('assets/img/kimiafarma.png'); ?>">
+    
+    <!-- PWA & Mobile -->
     <meta name="theme-color" content="#4e73df">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">

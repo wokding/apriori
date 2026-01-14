@@ -1,6 +1,27 @@
+# .htaccess untuk Apriori - Kimia Farma
+# Konfigurasi SEO-Friendly dan Security
+
 DirectoryIndex index.php
+
+# Aktifkan Rewrite Engine
 RewriteEngine On
 RewriteBase /
+
+# Force HTTPS (Redirect HTTP ke HTTPS)
+# Uncomment baris di bawah jika sudah ada SSL certificate
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirect www ke non-www (atau sebaliknya sesuai preferensi)
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Allow direct access to important SEO files FIRST (before any routing)
+RewriteRule ^robots\.txt$ - [L]
+RewriteRule ^sitemap\.xml$ - [L]
+RewriteRule ^manifest\.json$ - [L]
+RewriteRule ^service-worker\.js$ - [L]
+RewriteRule ^offline\.html$ - [L]
 
 # If requesting root "/", route to index.php explicitly
 # QSA flag preserves query string (important for InfinityFree ?i=X tracking on mobile)
@@ -11,6 +32,87 @@ RewriteRule ^$ index.php [QSA,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+
+# Prevent Directory Listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^(\.htpasswd|\.git|composer\.json|composer\.lock|package\.json|\.env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect application and system folders
+RedirectMatch 403 ^/(application|system|database|vendor)/.*$
+
+# Enable GZIP Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Images
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # CSS and JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    
+    # Fonts
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/x-font-ttf "access plus 1 year"
+    
+    # HTML
+    ExpiresByType text/html "access plus 1 hour"
+    
+    # Default
+    ExpiresDefault "access plus 1 month"
+</IfModule>
+
+# Set UTF-8 encoding
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .xml .json
+
+# Security Headers
+<IfModule mod_headers.c>
+    # X-Frame-Options
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # X-Content-Type-Options
+    Header set X-Content-Type-Options "nosniff"
+    
+    # X-XSS-Protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Error Documents
+ErrorDocument 404 /index.php
+ErrorDocument 403 /index.php
+ErrorDocument 500 /index.php
+
+# MIME Types
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/json json
+    AddType application/manifest+json webmanifest
+    AddType image/svg+xml svg svgz
+    AddType application/font-woff woff
+    AddType application/font-woff2 woff2
+</IfModule>
 
 # Hosting environments may disallow php_flag/php_value in .htaccess
 # Configure PHP limits via hosting control panel instead

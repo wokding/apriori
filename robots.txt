@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /application/
+Disallow: /system/
+Disallow: /vendor/
+Disallow: /database/
+
+Sitemap: https://siapriori.free.nf/sitemap.xml
