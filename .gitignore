@@ -121,7 +121,7 @@ Temporary Items
 .nfs*
 
 # ========== Backup Files ==========
-*.sql
+# *.sql  # Disabled - use specific rules in Database dumps section
 *.bak
 *.backup
 *.old
