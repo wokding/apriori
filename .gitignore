@@ -133,6 +133,7 @@ Temporary Items
 # Database dumps
 database/*.sql
 !database/db_apriori.sql  # Keep original schema
+!database/fix_session_error.sql  # Keep session fix installer
 *.sqlite
 *.db
 
